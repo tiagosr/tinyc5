@@ -22,7 +22,16 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
+Changelog
+
+[list]
+[li]Added project to google code. Make your checkout [url=https://code.google.com/p/tinyc5/]here[/url]
+[/list]
+
+ * 
+ *   * 
  */
+
 
 // @todo Add params scaleQuality
 // @todo Add setter for scaleQuality
@@ -90,7 +99,7 @@ function TinyC5( args ) {
     _origCanvasCss          = '';
     
     // Local reference
-    var self = this;
+    var self = this;      
 
     //////////////////////////////////////////////////////////////////////////////////////
     // Member variables/properties
@@ -258,10 +267,28 @@ function TinyC5( args ) {
     /**
      * Resets the pixels array to specific background color.
      */
-    this.clearPixels = function() {
-        _context.fillRect( 0, 0, _width, _height );
-        _buffer = _context.getImageData( 0, 0, _width, _height );
-        this.pixels = _buffer.data//_buffer.data;
+    this.clearPixels = function( jimsClear ) {
+        if ( jimsClear ) {
+            var pixels = this.pixels;
+            var l = this.pixels.length/4;
+			var i = 0;
+			while (l--)
+			{
+				pixels[i++] = 0;
+				pixels[i++] = 0;
+				pixels[i++] = 0;
+				pixels[i++] = 0xff;
+			}
+        } else {
+            /*
+            _context.fillRect( 0, 0, _width, _height );
+            _buffer = _context.getImageData( 0, 0, _width, _height );
+            this.pixels = _buffer.data//_buffer.data;
+            */
+           _buffer.data = _blank.subarray(0);
+           this.pixels = _buffer.data;
+           //this.pixels = _blank;
+        }
     }    
     
     //////////////////////////////////////////////////////////////////////////////////////
@@ -342,12 +369,14 @@ function TinyC5( args ) {
     _canvas.setAttribute( 'height', _height );
     _context    = _canvas.getContext( '2d' );
     _context.fillStyle = 'rgba(0,0,0, 255)';
-    _buffer     = _context.createImageData( _width, _height );
+    _buffer     = _context.createImageData( _width, _height );    
     
     // Preset alpha value
     for( var i = 3; i < _buffer.data.length; i += 4 ){
         _buffer.data[i] = _alpha;
     }
+    
+    console.log( typeof( _buffer.data ) );
     
     // Reference buffer.data to pixels property
     this.pixels = _buffer.data;    
@@ -366,6 +395,19 @@ function TinyC5( args ) {
     _outputCanvas.setAttribute( 'width', _width * _scale );
     _outputCanvas.setAttribute( 'height', _height * _scale );                
     _outputContext = _outputCanvas.getContext( '2d' );
+    
+    // @todel:    
+    var _blank = new Uint8ClampedArray( 4 * _width * _height );
+    var i = 0;
+    var l = _blank.length;
+    while (l--)
+    {
+        _blank[i++] = 0;
+        _blank[i++] = 0;
+        _blank[i++] = 0;
+        _blank[i++] = 0xff;
+    }
+
         
     //////////////////////////////////////////////////////////////////////////////////////
     // Set constants

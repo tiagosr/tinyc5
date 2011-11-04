@@ -5,7 +5,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         
         <link rel="stylesheet" type="text/css" href="styles.css" />
-        
+        <script type="text/javascript" src="https://raw.github.com/mrdoob/stats.js/master/src/Stats.js"></script>
         <script type="text/javascript" src="../src/TinyC5-0.5.js"></script>
         <script type="text/javascript">
 
@@ -332,21 +332,35 @@
 
         function TinyC5_Example05() 
         {
-            var tinyC5 = new TinyC5( {width: screen_width, height: screen_height, scale:1, debug: true, container: document.getElementById( 'tinyC5_container' ) } );
+            // Adding Mr doobs stats for benchmarking and testing
+            var stats = new Stats();
+
+            // Align top-left
+            stats.domElement.style.position = 'absolute';
+            stats.domElement.style.left = '0px';
+            stats.domElement.style.top = '0px';
+
+            document.getElementsByTagName( 'body' )[0].appendChild( stats.domElement );            
+            
+            var tinyC5 = new TinyC5( {width: screen_width, height: screen_height, scale:1, container: document.getElementById( 'tinyC5_container' ) } );
 
 			var frameCount = 0;
 			var roll = 0, tilt = 0, turn = 0;
+            
+            var jimsClear = true;
+            document.title = (jimsClear) ? 'Jim' : 'TinyC5';
 
 			var p0 = {}, p1 = {}, p2 = {}, p3 = {};
 
             tinyC5.update = function()
             {
+                stats.update();
 				
-                //tinyC5.clearPixels();
+                tinyC5.clearPixels( jimsClear );
                 
                 pixels = tinyC5.pixels;
 
-                cls();
+                //cls();
 
 				var p0 = {
 					sx: 0,
@@ -467,7 +481,9 @@
             // Get the canvas object
             var canvas = tinyC5.getCanvas();
             canvas.addEventListener( 'click', function(e) { 
-                tinyC5.setFullscreen( !tinyC5.isFullscreen() );
+                jimsClear = !jimsClear;
+                document.title = (jimsClear) ? 'Jim' : 'TinyC5';
+                //tinyC5.setFullscreen( !tinyC5.isFullscreen() );
             } );                    
                     
             // Start the show
