@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TinyC5-Example02 - Ugly RGB</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        
+        <link rel="stylesheet" type="text/css" href="styles.css" />
+        
+        <script type="text/javascript" src="../src/TinyC5-0.4.js"></script>
+        <script type="text/javascript">
+            /**
+             * TinyC5_Example02 - Ugly RGB
+             */
+            function TinyC5_Example02() 
+            {
+                // Declare some vars we need
+                var tinyC5, index, cnt = 0, table = new Array(256), TWO_PI = 2 * Math.PI, p;
+
+                // Get the container for our TinyC5 instance
+                var container = document.getElementById( 'tinyC5_container' );
+                
+                // Create the args
+                var args = { scale: 2,              // We scale the content by 2
+                             alpha: 8,              // Default alpha value of pixel data
+                             container: container}; // We tell TinyC5 were to put our canvas
+                         
+                // Get our TinyC5 instance
+                tinyC5 = new TinyC5( args );
+                                
+                // Precalculate lookup table
+                for (var i = 0; i < 256; i++) {
+                    table[i] = Math.floor((128 + 127.0 * Math.sin(i * TWO_PI / 256.0)));
+                }
+                
+                // Perform effect
+                tinyC5.update = function() 
+                {
+                    // Reset pointer to our pixel data
+                    index = 0;
+                    
+                    // Do effect logic per pixel
+                    cnt++;
+                    p = tinyC5.pixels;
+                    for( var y = 0; y < tinyC5.HEIGHT; y++ ) {
+                        for( var x=0; x < tinyC5.WIDTH; x++ ) {
+                            p[ index++ ] = table[(x / 5 + (cnt-1) / 4 + table[(cnt / 3 + y / 8) & 0xff]) & 0xff];   // Blue
+                            p[ index++ ] = table[(y / 3 + cnt/4 + table[(cnt + x / 5) & 0xff]) & 0xff];             // Green
+                            p[ index++ ] = table[(y / 4 + table[(cnt/2 + 3 / 4 + x / 3) & 0xff]) & 0xff];           // Blue
+                            index++;                                                                                // Skip alpha
+                        }
+                    }
+                }
+                
+                // Get the canvas object
+                var canvas = tinyC5.getCanvas();
+                canvas.addEventListener( 'click', function(e) { 
+                    tinyC5.setFullscreen( !tinyC5.isFullscreen() );
+                } );
+                
+                // Start the show
+                tinyC5.start();
+            }   
+        </script>
+            
+    </head>
+    <body onload="new TinyC5_Example02()">
+	<div id="container">
+		<div id="tinyC5_container" class="border">
+		</div>
+	</div>	
+	<div id="footer">
+		This effect was realized using <a href="http://www.dbfinteractive.com/forum/index.php?topic=5397.0">TinyC5 library</a> by <a href="http://www.bennyschuetz.com">benny!schuetz</a> 2o11
+	</div>
+</body>
+</html>

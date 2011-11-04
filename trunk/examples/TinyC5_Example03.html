@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TinyC5-Example03 - Keftales (forked from Shockwave^Codigos)</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        
+        <link rel="stylesheet" type="text/css" href="styles.css" />
+        
+        <script type="text/javascript" src="../src/TinyC5-0.4.js"></script>
+        <script type="text/javascript">
+            /**
+             * TinyC5_Example03 - Keftales
+             * 
+             * This example is forked from Shockwave's entry of the Short Intro Challenge:
+             * http://www.dbfinteractive.com/forum/index.php?topic=276.0
+             */
+            function TinyC5_Example03() 
+            {
+                // Declase vars
+                var tinyC5, index, gadd=0, gadd2=0, zf=0, mvx=0, mvy = 0, pwr=0;
+                
+                // Setup TinyC5
+                tinyC5 = new TinyC5( {scale: 2, container: document.getElementById( 'tinyC5_container' ) } );
+                
+                // Perform effect
+                tinyC5.update = function() 
+                {
+                    index = 0;
+                    gadd +=3;
+                    gadd2 +=20;
+                    zf = 0.11 + ( 0.1 * Math.sin( gadd / 191 ) );
+                    mvx = 499 * Math.sin( gadd/153 );
+                    mvy = 499 * Math.cos( gadd/131 );
+                    for( var y=0; y < 200; y++ ) {
+                        for ( var x=0; x < 320; x++ ) {
+                            pwr = 120+119*Math.sin((((x+mvx)*(y+mvy))+gadd2) * zf);
+                            tinyC5.pixels[ index++ ] = pwr;
+                            tinyC5.pixels[ index++ ] = pwr*y >> 9;
+                            index++;    // Skip blue                            
+                            index++;    // Skip alpha, its 255 by default
+                        }                        
+                    }
+                };
+                
+                // Get the canvas object
+                var canvas = tinyC5.getCanvas();
+                canvas.addEventListener( 'click', function(e) { 
+                    tinyC5.setFullscreen( !tinyC5.isFullscreen() );
+                } );
+                
+                // Start the show
+                tinyC5.start();
+            }    
+        </script>
+            
+    </head>
+    <body onload="TinyC5_Example03();">
+        <div id="container">
+            <div id="tinyC5_container">
+            </div>
+        </div>	
+        <div id="footer">
+            This effect was realized using <a href="http://www.dbfinteractive.com/forum/index.php?topic=5397.0">TinyC5 library</a> by <a href="http://www.bennyschuetz.com">benny!schuetz</a> 2o11 | Keftales code forked from Shockwave
+        </div>        
+    </body>
+</html>
