@@ -1,4 +1,8 @@
-
+/**
+ * TinyC5Utils
+ * 
+ * A collection of helper methods.
+ */
 var TinyC5Utils = {
     
     /**
