@@ -23,9 +23,11 @@
                 tinyC5 = new TinyC5();
                 
                 // Create the args and initialize
-                var args = { scale: 2,                           // We scale the content by 2
-                             bgColor: tinyC5.color( 0, 0, 0, 8), // Background color
-                             container: container };             // We tell TinyC5 were to put our canvas
+                var args = { scale: 2,                          // We scale the content by 2
+                    bgColor: tinyC5.color( 0, 0, 0, 8),         // Background color
+                    container: container,                       // We tell TinyC5 were to put our canvas
+                    title: 'Ugly RGB - TinyC5 Example #02'      // Title
+                };  
                 tinyC5.init( args );
                 
                 // Precalculate lookup table
