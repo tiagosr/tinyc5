@@ -1,4 +1,15 @@
+06.11.2011 - Release of version 0.5
 
+    Added project to google code. Make your checkout here
+    Added TinyC5.clearPixels() method for setting all pixels to a specified color.
+    Added browser detection and execution browser optimized code under the hood
+    Added TinyC5.color() method that created a simple property color object
+    Added TinyC5.init() method which maps the constructor.
+    Separated utility functions to its own object TinyC5Utils. TinyC5 core does not depend on TinyC5Utils.
+    Replaced alpha params property with bgColor property
+    Added title init parameter to set browser windows title.
+    Renamed examples.
+    Added Jim's fantastic rubber duck demo to the official examples. Thanks Jim.
 
 02.11.2011 - Release of version 0.4
 
