@@ -32,20 +32,15 @@ Changelog
 [li]Added TinyC5.clearPixels() method for setting all pixels to a specified color.[/li]
 [li]Added Jim's fantastic rubber duck demo to the official examples. Thanks Jim.[li]
 [li]Added TinyC5.init() method which maps the constructor.[/li]
+[li]Added title init parameter to set browser windows title.[/li]
 [li]Renamed examples.[/li]
+[li]Cleaned up code to reduce size.[/li]
 [/list]
 
  * 
  *   * 
  */
 
-
-// @todo Add params scaleQuality
-// @todo Add setter for scaleQuality
-// @todo Add getter for scaleQuality
-// @todo Add title to params to set for window title
-// @todo Remove stats from code. 
-// @todo Add screenshot taking to Utils
 // @todo Add public rendering engine property
 
 //
@@ -131,9 +126,45 @@ function TinyC5( args ) {
             _cancelRequestAnimFrame( _loopTimeout );
         }
     };
+    
+    var _detectBrowserEngine = function() {
+        // RegEx for browser engine
+	var rwebkit = /(webkit)[ \/]([\w.]+)/,
+        ropera = /(opera)(?:.*version)?[ \/]([\w.]+)/,
+	rmsie = /(msie) ([\w.]+)/,
+	rmozilla = /(mozilla)(?:.*? rv:([\w.]+))?/;
+                
+        var ua = window.navigator.userAgent.toLowerCase();
+
+        var match = rwebkit.exec( ua ) ||
+                ropera.exec( ua ) ||
+                rmsie.exec( ua ) ||
+                ua.indexOf("compatible") < 0 && rmozilla.exec( ua ) ||
+                [];
+            
+        // Map browser engine to TinyC5 constants
+        switch( match[1] ) {
+            case 'mozilla':
+                self.BROWSER_ENGINE = self.BROWSER_ENGINE_MOZILLA;
+                break;
+            case 'msie':
+                self.BROWSER_ENGINE = self.BROWSER_ENGINE_MSIE;
+                break;
+            case 'webkit':
+            case 'safari':
+                self.BROWSER_ENGINE = self.BROWSER_ENGINE_WEBKIT;
+                break;
+            case 'opera':
+                self.BROWSER_ENGINE = self.BROWSER_ENGINE_OPERA;
+                break;
+            default:
+                self.BROWSER_ENGINE = self.BROWSER_ENGINE_UNKNOWN;
+                break;
+        }
+    }
 
     //////////////////////////////////////////////////////////////////////////////////////
-    // Browser depending methods fills
+    // Browser depending method fills
     //////////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -164,7 +195,7 @@ function TinyC5( args ) {
      * TinyC5.clearPixels() version using FillRect to clear canvas.
      * 
      * Currently used for:
-     * - IE
+     * - MSIE
      * 
      * @param bgColor   Utils.Color     Background color
      * 
@@ -195,6 +226,9 @@ function TinyC5( args ) {
             // Remove it
             _container.removeChild( _outputCanvas );
         }
+        
+        // Detect browser engine
+        //_detectBrowserEngine();        
         
         // Setting params
         _params     = args || {};
@@ -227,7 +261,7 @@ function TinyC5( args ) {
         // Reference buffer.data to pixels property
         this.pixels = _buffer.data;
 
-        // Update values of public
+        // Update values of constants
         this.WIDTH          = _width;
         this.HEIGHT         = _height;        
 
@@ -381,25 +415,39 @@ function TinyC5( args ) {
         
         return true;
     }
+
+    //////////////////////////////////////////////////////////////////////////////////////
+    // Detect browser engine
+    //////////////////////////////////////////////////////////////////////////////////////    
+
+    // Possible values for BROWSER_ENGINE constant
+    this.BROWSER_ENGINE_MSIE    = 'msie';
+    this.BROWSER_ENGINE_WEBKIT  = 'webkit';
+    this.BROWSER_ENGINE_SAFARI  = 'safari';
+    this.BROWSER_ENGINE_OPERA   = 'opera';
+    this.BROWSER_ENGINE_MOZILLA = 'mozilla';
+    this.BROWSER_ENGINE_UNKNOWN = 'unknown';        
+
+    this.BROWSER_ENGINE = this.BROWSER_ENGINE_UNKNOWN;
+    
+    _detectBrowserEngine();   
     
     //////////////////////////////////////////////////////////////////////////////////////
     // Setting browser dependent code
     //////////////////////////////////////////////////////////////////////////////////////    
     
     // ClearPixels
-    this.clearPixels = _clearPixelsFillRect; //_clearPixelsDefault;    
+    this.clearPixels = ( this.BROWSER_ENGINE === this.BROWSER_ENGINE_MSIE ) ? _clearPixelsFillRect : _clearPixelsDefault;
     
     //////////////////////////////////////////////////////////////////////////////////////
     // Set constants
     //////////////////////////////////////////////////////////////////////////////////////    
     
-    this.WIDTH          = _width;
-    this.HEIGHT         = _height;
     this.VERSION        = 0.5;
     
     //////////////////////////////////////////////////////////////////////////////////////
     // Finalize initialization
     //////////////////////////////////////////////////////////////////////////////////////        
     
-    this.init( args );
+    this.init( args );    
 };

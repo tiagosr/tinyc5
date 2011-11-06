@@ -1,0 +1,5 @@
+Stuff I have in mind that I might implement in future releases (no specific order).
+
++ Add scaleQuality (param, getter, setter)
++ Add utils method for screenshot
++ Add mouse support
