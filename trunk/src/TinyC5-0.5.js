@@ -22,26 +22,7 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
-Changelog
-
-[list]
-[li]Added project to google code. Make your checkout [url=https://code.google.com/p/tinyc5/]here[/url][/li]
-[li]Replaced _alpha params property with bgColor property[/li]
-[li]Separated utility functions to its own object TinyC5Utils. TinyC5 core does not depend on TinyC5Utils.[/li]
-[li]Added TinyC5.color() method that created a simple property color object[/li]
-[li]Added TinyC5.clearPixels() method for setting all pixels to a specified color.[/li]
-[li]Added Jim's fantastic rubber duck demo to the official examples. Thanks Jim.[li]
-[li]Added TinyC5.init() method which maps the constructor.[/li]
-[li]Added title init parameter to set browser windows title.[/li]
-[li]Renamed examples.[/li]
-[li]Cleaned up code to reduce size.[/li]
-[/list]
-
- * 
- *   * 
  */
-
-// @todo Add public rendering engine property
 
 //
 // Polyfills:

@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>TinyC5-Example05 - Rubberduck 3d</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
         <link rel="stylesheet" type="text/css" href="styles.css" />
-        <script type="text/javascript" src="Stats.js"></script>
         <script type="text/javascript" src="../src/TinyC5-0.5.js"></script>
         <script type="text/javascript">
 
@@ -42,8 +40,8 @@
                     ER = tmp
                 }
 				
-                xl = Math.floor(EL.x);
-                xr = Math.floor(ER.x);
+                xl = ~~(EL.x);
+                xr = ~~(ER.x);
 		
                 //offscreen in X?
                 if (xl >= current_view.rect_right) return;
@@ -105,12 +103,12 @@
                 var dyB, dxB, drB, dgB, dbB;
                 var Y, Ye;
 
-                p0.sx = Math.floor(p0.sx);
-                p0.sy = Math.floor(p0.sy);
-                p1.sx = Math.floor(p1.sx);
-                p1.sy = Math.floor(p1.sy);
-                p2.sx = Math.floor(p2.sx);
-                p2.sy = Math.floor(p2.sy);
+                p0.sx = ~~(p0.sx);
+                p0.sy = ~~(p0.sy);
+                p1.sx = ~~(p1.sx);
+                p1.sy = ~~(p1.sy);
+                p2.sx = ~~(p2.sx);
+                p2.sy = ~~(p2.sy);
 
 
                 if (p0.sy<=p1.sy && p0.sy<=p2.sy)
@@ -319,14 +317,6 @@
 
             function Example05() 
             {
-                // Adding Mr doobs stats for benchmarking and testing
-                var stats = new Stats();
-                // Align top-left
-                stats.domElement.style.position = 'absolute';
-                stats.domElement.style.left = '0px';
-                stats.domElement.style.top = '0px';
-                document.getElementsByTagName( 'body' )[0].appendChild( stats.domElement );
-                
                 var tinyC5 = new TinyC5();
                 var args = { title: 'Rubberduck 3D - TinyC5 Example #05',
                     width: screen_width, 
@@ -344,8 +334,6 @@
             
                 tinyC5.update = function()
                 {
-                    stats.update();
-				
                     tinyC5.clearPixels();
                     pixels = tinyC5.pixels;
 
