@@ -25,7 +25,13 @@
 Changelog
 
 [list]
-[li]Added project to google code. Make your checkout [url=https://code.google.com/p/tinyc5/]here[/url]
+[li]Added project to google code. Make your checkout [url=https://code.google.com/p/tinyc5/]here[/url][/li]
+[li]Replaced _alpha params property with bgColor property[/li]
+[li]Separated utility functions to its own object TinyC5Utils. TinyC5 core does not depend on TinyC5Utils.[/li]
+[li]Added TinyC5.color() method that created a simple property color object[/li]
+[li]Added TinyC5.clearPixels() method for setting all pixels to a specified color.[/li]
+[li]Added Jim's fantastic rubber duck demo to the official examples. Thanks Jim.[li]
+[li]Added TinyC5.init() method which maps the constructor.[/li]
 [/list]
 
  * 
@@ -36,10 +42,10 @@ Changelog
 // @todo Add params scaleQuality
 // @todo Add setter for scaleQuality
 // @todo Add getter for scaleQuality
-// @todo Add TinyC5.clearPixels
 // @todo Add title to params to set for window title
-// @todo Add shortcut in debug mode for screenshot
-// @todo Output FPS on canvas
+// @todo Remove stats from code. 
+// @todo Add screenshot taking to Utils
+// @todo Add public rendering engine property
 
 //
 // Polyfills:
@@ -75,7 +81,6 @@ window.requestAnimFrame = (function(){
  * Constructor
  * 
  * @param args  Object  Can have the following properties
- * 
  */
 function TinyC5( args ) {
     //////////////////////////////////////////////////////////////////////////////////////
@@ -83,13 +88,9 @@ function TinyC5( args ) {
     //////////////////////////////////////////////////////////////////////////////////////
 
     var _canvas, _context, _params, _container, _buffer, _outputCanvas, _outputContext,
-    _width, _height, _scale, _debug, _isRunning = false, _fullscreen = false,
-    _startTime = 0, _loopTimeout, _fps = 1000 / 60, _alpha = 255, _fillColor, _fillColorArray;
+    _width, _height, _scale, _isRunning = false, _fullscreen = false, _startTime = 0, 
+    _loopTimeout, _fps = 1000 / 60, _bgColor;
 
-    // FPS Stats
-    var _time = Date.now(), _timeLastFrame = _time, _timeLastSecond = _time,
-    _statsFps = 0, _frames = 0, _timeDelta = 0;
-    
     // CSS styles variables for fullscreen mode
     var _fullscreenBodyCss, _origBodyCss, _fullscreenCanvasCss, _origCanvasCss;
     _fullscreenBodyCss      = 'margin: 0px;padding: 0px;border:none;height: 100%;width: 100%;';
@@ -120,24 +121,7 @@ function TinyC5( args ) {
         _outputContext.drawImage( _canvas, 0, 0, _outputCanvas.width, _outputCanvas.height );
     };
 
-    var _stats = function() {
-        _time = Date.now();
-        _timeDelta = _time - _timeLastFrame;
-        _timeLastFrame = _time;
-
-        _frames++;
-
-        if ( _time > _timeLastSecond + 1000 ) {
-            _statsFps = Math.round( ( _frames * 1000 ) / ( _time - _timeLastSecond ) );
-            _timeLastSecond = _time;
-            _frames = 0;
-            // @todo Outputting via console is pretty lame and slow
-            if ( _debug ) console.log( _statsFps + ' FPS' );
-        }
-    }
-
     var _loop = function() {
-        _stats();
         if ( _isRunning ) {
             self.update();
             _render();
@@ -146,10 +130,118 @@ function TinyC5( args ) {
             _cancelRequestAnimFrame( _loopTimeout );
         }
     };
-    
+
+    //////////////////////////////////////////////////////////////////////////////////////
+    // Browser depending methods fills
+    //////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Default version of TinyC5.clearPixels()
+     * 
+     * @param bgColor   Utils.Color     Background color
+     * 
+     * @return array    Cleared pixels array
+     */
+    var _clearPixelsDefault = function( color ) {
+        // Loop over every pixel and set it to background color
+        var pixels = this.pixels;
+        var l = this.pixels.length/4;
+        var i = 0;
+        var bgColor = color || _bgColor;
+        while (l--)
+        {
+            pixels[i++] = bgColor.r;
+            pixels[i++] = bgColor.g;
+            pixels[i++] = bgColor.b;
+            pixels[i++] = bgColor.a;
+        }
+        
+        return this.pixels;
+    }
+
+    /**
+     * TinyC5.clearPixels() version using FillRect to clear canvas.
+     * 
+     * Currently used for:
+     * - IE
+     * 
+     * @param bgColor   Utils.Color     Background color
+     * 
+     * @return array    Cleared pixels array
+     */
+    var _clearPixelsFillRect = function( color ) {
+        // Use fillrect
+        // Note: No need to set fillcolor since it is already set during initialization
+        _context.fillRect( 0, 0, _width, _height );
+        _buffer = _context.getImageData( 0, 0, _width, _height );        
+        this.pixels = _buffer.data;
+        
+        return this.pixels;
+    }
+
     //////////////////////////////////////////////////////////////////////////////////////
     // Public methods
     //////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Inits
+     * 
+     * @param args  Object  Can have the following properties
+     */
+    this.init = function( args ) {
+        // If an old _outputCanvas exists
+        if ( _container && _outputCanvas ) {
+            // Remove it
+            _container.removeChild( _outputCanvas );
+        }
+        
+        // Setting params
+        _params     = args || {};
+        _scale      = _params.scale || 1;
+        _width      = _params.width || 320;
+        _height     = _params.height || 200;
+        _fullscreen = _params.fullscreen || false;
+        _bgColor    = _params.bgColor || this.color( 0, 0, 0 );
+        _container  = _params.container || document.getElementsByTagName( 'body' )[0];
+
+        // Setting up canvas
+        _canvas     = document.createElement( 'canvas' );
+        _canvas.setAttribute( 'width', _width );
+        _canvas.setAttribute( 'height', _height );
+        _context    = _canvas.getContext( '2d' );
+        _context.fillStyle = "rgba(" + _bgColor.r + "," + _bgColor.g + "," + _bgColor.b + "," + _bgColor.a +")";
+        _buffer     = _context.createImageData( _width, _height );    
+
+        // Set pixels to default background color
+        var i = 0, l = _buffer.data.length;
+        while (l--)
+        {
+            _buffer.data[i++] = _bgColor.r;
+            _buffer.data[i++] = _bgColor.g;
+            _buffer.data[i++] = _bgColor.b;
+            _buffer.data[i++] = _bgColor.a;
+        }
+
+        // Reference buffer.data to pixels property
+        this.pixels = _buffer.data;
+
+        // Update values of public
+        this.WIDTH          = _width;
+        this.HEIGHT         = _height;        
+
+        // Create outupt canvas to document
+        _outputCanvas = document.createElement( 'canvas' );                
+        _outputCanvas.setAttribute( 'width', _width * _scale );
+        _outputCanvas.setAttribute( 'height', _height * _scale );                
+        _outputContext = _outputCanvas.getContext( '2d' );
+
+        // Add output canvas to domtree
+        _container.appendChild( _outputCanvas );
+
+        // Set fullscreen
+        this.setFullscreen( _fullscreen );
+    }
+
 
     /**
      * Update method
@@ -239,6 +331,27 @@ function TinyC5( args ) {
     }
     
     /**
+     * Creates a color object
+     * 
+     * @param red   integer     Red value (0-255)
+     * @param blue  integer     Blue value (0-255)
+     * @param green integer     green value (0-255)
+     * @param alpha integer     (optional) Alpha value (0-255). Default is 255.
+     * 
+     * @return Object   { r: redValue,
+     *                    g: greenValue,
+     *                    b: blueValue,
+     *                    a: alphaValue }
+     */
+    this.color = function( red, green, blue, alpha ) {
+        if ( alpha ) {
+            return {r: red, g: green, b: blue, a:alpha};
+        } else {
+            return {r: red, g: green, b: blue, a: 255};
+        }
+    }    
+    
+    /**
      * Copies given array of pixel data to internal pixel data
      * 
      * Note: 
@@ -257,158 +370,26 @@ function TinyC5( args ) {
         // Copy pixel by pixel
         // @todo Optimize this browser dependant, e.g. Firefox seems to allow direct assigning
         var len = pixels.length, i=0;
-        while( i < len ) {
+        while(len--) {
             this.pixels[i] = pixels[i++];
         }
         
         return true;
-    }
+    }        
+    
+    //////////////////////////////////////////////////////////////////////////////////////
+    // Setting browser dependent code
+    //////////////////////////////////////////////////////////////////////////////////////    
     
     /**
      * Resets the pixels array to specific background color.
-     */
-    this.clearPixels = function( jimsClear ) {
-        if ( jimsClear ) {
-            var pixels = this.pixels;
-            var l = this.pixels.length/4;
-			var i = 0;
-			while (l--)
-			{
-				pixels[i++] = 0;
-				pixels[i++] = 0;
-				pixels[i++] = 0;
-				pixels[i++] = 0xff;
-			}
-        } else {
-            /*
-            _context.fillRect( 0, 0, _width, _height );
-            _buffer = _context.getImageData( 0, 0, _width, _height );
-            this.pixels = _buffer.data//_buffer.data;
-            */
-           _buffer.data = _blank.subarray(0);
-           this.pixels = _buffer.data;
-           //this.pixels = _blank;
-        }
-    }    
-    
-    //////////////////////////////////////////////////////////////////////////////////////
-    // Utils
-    //////////////////////////////////////////////////////////////////////////////////////
-    
-    // Declare namespace
-    this.Utils = {};
-    
-    /**
-     * Gets imagedata from given image
      * 
-     * @param image Image   Image object
-     * @param filterAlphaValues boolean If set to true, the return value does not contain any alpha values
+     * @param bgColor   Utils.Color     Background color
      * 
-     * @return array
+     * @return array    Cleared pixels array
      */
-    this.Utils.getImagedataFromImage = function( image, filterAlphaValues ) {
-        // Declare vars & params
-        var imgData = null;
-        var filterAlphaValues = filterAlphaValues || false;
-        
-        // If image is invalid
-        if ( !image || !image.width || !image.height ) {
-            // Return null
-            return imgData;
-        } else {
-            // Create canvas to draw image on to get its data
-            var imgCanvas = document.createElement( 'canvas' );
-            imgCanvas.setAttribute( 'width', image.width );
-            imgCanvas.setAttribute( 'height', image.height );
-            imgCanvas.getContext( '2d' ).drawImage(image, 0, 0);
-            imgData = imgCanvas.getContext( '2d' ).getImageData(0, 0, image.width, image.height).data;
-            delete imgCanvas;
-            
-            // If we should filter out alpha
-            if ( filterAlphaValues ) {
-                var rgbOnly = [];
-                var rgbCnt = 0;
-                // Filter out alphas
-                for( var i=0; i < imgData.length; i++ ){
-                    if ( 0 != ((i+1) % 4) ) {
-                        rgbOnly[rgbCnt] = imgData[i];
-                        rgbCnt++;
-                    }
-                }
-                imgData = rgbOnly;
-            }
-        }
-        
-        return imgData;
-    }
+    this.clearPixels = _clearPixelsFillRect; //_clearPixelsDefault;    
     
-    this.Utils.Color = function( red, green, blue, alpha ) {
-        if ( alpha ) {
-            return { r: red, g: green, b: blue, a:alpha };
-        } else {
-            return { r: red, g: green, b: blue };
-        }
-    }
-    //////////////////////////////////////////////////////////////////////////////////////
-    // Setup
-    //////////////////////////////////////////////////////////////////////////////////////
-   
-    // Setting params
-    _params     = args || {};
-    _scale      = _params.scale || 1;
-    _width      = _params.width || 320;
-    _height     = _params.height || 200;
-    _alpha      = _params.alpha || 255;
-    _fullscreen = _params.fullscreen || false;
-    _debug      = _params.debug || false;
-    _container  = _params.container || document.getElementsByTagName( 'body' )[0];
-
-    // Setting up canvas
-    _canvas     = document.createElement( 'canvas' );
-    _canvas.setAttribute( 'width', _width );
-    _canvas.setAttribute( 'height', _height );
-    _context    = _canvas.getContext( '2d' );
-    _context.fillStyle = 'rgba(0,0,0, 255)';
-    _buffer     = _context.createImageData( _width, _height );    
-    
-    // Preset alpha value
-    for( var i = 3; i < _buffer.data.length; i += 4 ){
-        _buffer.data[i] = _alpha;
-    }
-    
-    console.log( typeof( _buffer.data ) );
-    
-    // Reference buffer.data to pixels property
-    this.pixels = _buffer.data;    
-    
-    _fillColorArray = new Array( this.pixels.length );
-    var i=0;
-    while ( i < _fillColorArray.length ) {
-        _fillColorArray[i++] =  0;
-        _fillColorArray[i++] =  0;
-        _fillColorArray[i++] =  0;
-        _fillColorArray[i++] =  255;
-    }
-    
-    // Create outupt canvas to document
-    _outputCanvas = document.createElement( 'canvas' );                
-    _outputCanvas.setAttribute( 'width', _width * _scale );
-    _outputCanvas.setAttribute( 'height', _height * _scale );                
-    _outputContext = _outputCanvas.getContext( '2d' );
-    
-    // @todel:    
-    var _blank = new Uint8ClampedArray( 4 * _width * _height );
-    var i = 0;
-    var l = _blank.length;
-    while (l--)
-    {
-        _blank[i++] = 0;
-        _blank[i++] = 0;
-        _blank[i++] = 0;
-        _blank[i++] = 0xff;
-    }
-
-        
     //////////////////////////////////////////////////////////////////////////////////////
     // Set constants
     //////////////////////////////////////////////////////////////////////////////////////    
@@ -419,11 +400,7 @@ function TinyC5( args ) {
     
     //////////////////////////////////////////////////////////////////////////////////////
     // Finalize initialization
-    //////////////////////////////////////////////////////////////////////////////////////    
+    //////////////////////////////////////////////////////////////////////////////////////        
     
-    // Set fullscreen
-    this.setFullscreen( _fullscreen );
-    
-    // Add output canvas to domtree
-    _container.appendChild( _outputCanvas );
+    this.init( args );
 };

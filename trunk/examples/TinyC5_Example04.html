@@ -6,8 +6,9 @@
         
         <link rel="stylesheet" type="text/css" href="styles.css" />
         
-        <script type="text/javascript" src="../src/TinyC5-0.4.js"></script>
-        <script type="text/javascript" src="Assets.js?04"></script>
+        <script type="text/javascript" src="../src/TinyC5Utils-0.5.js"></script>
+        <script type="text/javascript" src="../src/TinyC5-0.5.js"></script>
+        <script type="text/javascript" src="Assets.js?05"></script>
         <script type="text/javascript">
             /**
              * TinyC5_Example04 - Plane deformation
@@ -73,7 +74,7 @@
                     var tinyC5 = new TinyC5( {width: width, height: height, scale:2, container: document.getElementById( 'tinyC5_container' ) } );
                     
                     // Get textureImageData using handy Utils function of TinyC5 while skipping alpha channel
-                    textureImageData = tinyC5.Utils.getImagedataFromImage( texture, true );
+                    textureImageData = TinyC5Utils.getImagedataFromImage( texture, true );
 
                     // Perform effect
                     tinyC5.update = function()
