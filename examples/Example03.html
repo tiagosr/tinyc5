@@ -20,7 +20,10 @@
                 var tinyC5, index, gadd=0, gadd2=0, zf=0, mvx=0, mvy = 0, pwr=0;
                 
                 // Setup TinyC5
-                tinyC5 = new TinyC5( {scale: 2, container: document.getElementById( 'tinyC5_container' ) } );
+                tinyC5 = new TinyC5({ scale: 2, 
+                    container: document.getElementById( 'tinyC5_container' ), 
+                    title: 'Keftales - TinyC5 Example #03' 
+                });
                 
                 // Perform effect
                 tinyC5.update = function() 

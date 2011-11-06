@@ -32,6 +32,7 @@ Changelog
 [li]Added TinyC5.clearPixels() method for setting all pixels to a specified color.[/li]
 [li]Added Jim's fantastic rubber duck demo to the official examples. Thanks Jim.[li]
 [li]Added TinyC5.init() method which maps the constructor.[/li]
+[li]Renamed examples.[/li]
 [/list]
 
  * 
@@ -89,7 +90,7 @@ function TinyC5( args ) {
 
     var _canvas, _context, _params, _container, _buffer, _outputCanvas, _outputContext,
     _width, _height, _scale, _isRunning = false, _fullscreen = false, _startTime = 0, 
-    _loopTimeout, _fps = 1000 / 60, _bgColor;
+    _loopTimeout, _fps = 1000 / 60, _bgColor, _title;
 
     // CSS styles variables for fullscreen mode
     var _fullscreenBodyCss, _origBodyCss, _fullscreenCanvasCss, _origCanvasCss;
@@ -203,6 +204,7 @@ function TinyC5( args ) {
         _fullscreen = _params.fullscreen || false;
         _bgColor    = _params.bgColor || this.color( 0, 0, 0 );
         _container  = _params.container || document.getElementsByTagName( 'body' )[0];
+        _title      = _params.title || 'TinyC5';
 
         // Setting up canvas
         _canvas     = document.createElement( 'canvas' );
@@ -240,6 +242,9 @@ function TinyC5( args ) {
 
         // Set fullscreen
         this.setFullscreen( _fullscreen );
+        
+        // Set window title
+        document.title = _title;
     }
 
 
@@ -375,19 +380,13 @@ function TinyC5( args ) {
         }
         
         return true;
-    }        
+    }
     
     //////////////////////////////////////////////////////////////////////////////////////
     // Setting browser dependent code
     //////////////////////////////////////////////////////////////////////////////////////    
     
-    /**
-     * Resets the pixels array to specific background color.
-     * 
-     * @param bgColor   Utils.Color     Background color
-     * 
-     * @return array    Cleared pixels array
-     */
+    // ClearPixels
     this.clearPixels = _clearPixelsFillRect; //_clearPixelsDefault;    
     
     //////////////////////////////////////////////////////////////////////////////////////
