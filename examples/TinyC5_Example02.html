@@ -6,7 +6,7 @@
         
         <link rel="stylesheet" type="text/css" href="styles.css" />
         
-        <script type="text/javascript" src="../src/TinyC5-0.4.js"></script>
+        <script type="text/javascript" src="../src/TinyC5-0.5.js"></script>
         <script type="text/javascript">
             /**
              * TinyC5_Example02 - Ugly RGB
@@ -19,14 +19,15 @@
                 // Get the container for our TinyC5 instance
                 var container = document.getElementById( 'tinyC5_container' );
                 
-                // Create the args
-                var args = { scale: 2,              // We scale the content by 2
-                             alpha: 8,              // Default alpha value of pixel data
-                             container: container}; // We tell TinyC5 were to put our canvas
-                         
                 // Get our TinyC5 instance
-                tinyC5 = new TinyC5( args );
-                                
+                tinyC5 = new TinyC5();
+                
+                // Create the args and initialize
+                var args = { scale: 2,                           // We scale the content by 2
+                             bgColor: tinyC5.color( 0, 0, 0, 8), // Background color
+                             container: container };             // We tell TinyC5 were to put our canvas
+                tinyC5.init( args );
+                
                 // Precalculate lookup table
                 for (var i = 0; i < 256; i++) {
                     table[i] = Math.floor((128 + 127.0 * Math.sin(i * TWO_PI / 256.0)));

@@ -1,0 +1,37 @@
+
+
+02.11.2011 - Release of version 0.4
+
+    Reworked pixel handling in favor of speed (refer to benchmark)
+    Reworked all existing examples to fit new API. All examples should run way faster now.
+    Added new example showing some plane deformation.
+    Added TinyC5.copyPixels() method to copy arrays of pixels to TinyC5.pixels. Refer to TinyC5_Example01.
+    Added additional param alpha for a default alpha pixel value. Refer to TinyC5_Example02.
+    Added TinyC5.Utils.getImagedataFromImage() method - the methodname says it all. Refer to TinyC5_Example04.
+    Added TinyC5.getTime() that returns elapsed milliseconds since app start.
+    Added polyFills for requestAnimFrame and cancelAnimFrame. Refer to http://notes.jetienne.com/2011/05/18/cancelRequestAnimFrame-for-paul-irish-requestAnimFrame.html .
+    Removed constant TinyC5.PIXEL_LENGTH.
+    Fixed some minor bugs.
+
+
+30.10.2011 - Release of version 0.3
+
+    Optimized rendering routine with detaching pixels (refer to: http://www.onaluf.org/en/entry/13).
+    Added optional param property 'container' that let you assign your canvas to a certain DOM element.
+    Added TinyC5.setFullscreen().
+    Added TinyC5.isFullscreen().
+    Added TinyC5.getCanvas().
+    Modified naming of 'fullscreen' param property. Changed from fullScreen to fullscreen.
+    Added constant property PIXEL_LENGTH.
+    Added two more examples.
+    Added proper styling of the examples.
+
+26.10.2011 - Release of version 0.2
+
+    Added fullscreen mode
+    Refactor TinyC5.update() method. Buffer is not passed in, instead you have direct access to the pixeldata.
+    Restructured project folders
+    Optimized Example01. Thanks to Shockwave^Codigos
+    Some more public properties, constants added
+
+21.10.2011 - Initial release of version 0.1

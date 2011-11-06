@@ -6,7 +6,7 @@
         
         <link rel="stylesheet" type="text/css" href="styles.css" />
 
-        <script type="text/javascript" src="../src/TinyC5-0.4.js"></script>
+        <script type="text/javascript" src="../src/TinyC5-0.5.js"></script>
         <script type="text/javascript">
             /**
              * Small example showing a TV noise effect with minimal setup.
@@ -15,8 +15,8 @@
              */
             function TinyC5_Example01() 
             {
-                // Create an instance
-                var tinyC5 = new TinyC5( { scale: 2, container: document.getElementById( 'tinyC5_container' ) } );
+                // Create and init an instance
+                var tinyC5 = new TinyC5( { scale: 2, container: document.getElementById( 'tinyC5_container' ) } );                
                 
                 // Create larger backBuffer
                 var backBuffer = new Array( 960 * 600 * 4 );
