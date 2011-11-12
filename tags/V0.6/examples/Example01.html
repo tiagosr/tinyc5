@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        
+        <link rel="stylesheet" type="text/css" href="styles.css" />
+
+        <script type="text/javascript" src="../src/TinyC5-0.6.js"></script>
+        <script type="text/javascript">
+            /**
+             * Small example showing a TV noise effect with minimal setup.
+             * 
+             * Thanks must go to Shockwave^Codigos for optimization tips.
+             */
+            function Example01() 
+            {
+                // Create and init an instance
+                var tinyC5 = new TinyC5( { scale: 2, container: document.getElementById( 'tinyC5_container' ), title: 'TV Noise - TinyC5 Example #01' } );
+                
+                // Create larger backBuffer
+                var backBuffer = new Array( 960 * 600 * 4 );
+                
+                // Precalculate the backBuffer
+                for (var i = 0; i < backBuffer.length; i += 4) 
+                {
+                    var grey = Math.floor( Math.random() * 256 );
+                    backBuffer[i] = grey;       // Red
+                    backBuffer[i+1] = grey;     // Green
+                    backBuffer[i+2] = grey;     // Blue
+                    backBuffer[i+3] = 255;      // Alpha
+                }
+
+                // Overwrite update function with our stunning effect
+                var f = 0;
+                tinyC5.update = function() 
+                {
+                    f = 4 * Math.floor( Math.random() * 640 * 400 );
+                    tinyC5.copyPixels( backBuffer.slice( f, 320 * 200 * 4 + f ) );
+                };
+                
+                // Get the canvas object
+                var canvas = tinyC5.getCanvas();
+                canvas.addEventListener( 'click', function(e) { 
+                    tinyC5.setFullscreen( !tinyC5.isFullscreen() );
+                } );
+
+                // Start the show
+                tinyC5.start();
+            }
+        </script>
+            
+    </head>
+    <body onload="Example01();">
+        <div id="container">
+            <div id="tinyC5_container">
+            </div>
+        </div>	
+        <div id="footer">
+            TV Noise by <a href="http://www.bennyschuetz.com">benny!schuetz</a> | Created with <a href="http://www.dbfinteractive.com/forum/index.php?topic=5397.0">TinyC5</a>
+        </div>        
+    </body>
+</html>
