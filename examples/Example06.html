@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        
+        <link rel="stylesheet" type="text/css" href="styles.css" />
+        
+        <script type="text/javascript" src="../src/TinyC5Utils-0.6.js"></script>
+        <script type="text/javascript" src="../src/TinyC5-0.6.js"></script>
+        <script type="text/javascript" src="Assets.js?06"></script>
+        <script type="text/javascript">
+            /**
+             * Example06 - Interactive Plane deformation with brightness
+             * 
+             * Original example and texture by luis.net
+             * http://www.luis.net/
+             */
+            function Example06() 
+            {
+                // Var declaration
+                var texture, width, height, lookupTable, frameCount = 0, textureImageData;
+                
+                // Fill the lookupTable with some values
+                var _createLookupTable = function() {
+                    // increment placeholder
+                    var k = 0;
+                    
+                    // u and v are euclidean coordinates 
+                    var u, v, bright;
+
+                    // Loop over image
+                    for( var j=0; j < height; j++ )
+                    {
+                        var y = -1.00 + 2.00*j/height;
+                        for( var i=0; i < width; i++ )
+                        {
+                            var x = -1.00 + 2.00*i/width;
+                            var d = Math.sqrt( x*x + y*y );
+                            var a = Math.atan2( y, x );
+                            var r = d;
+
+                            u = x/Math.abs(y);
+                            v = 1/Math.abs(y);
+                            bright = 10 * -v;
+                            
+                            lookupTable[k++] = Math.floor( width*u & width-1 );
+                            lookupTable[k++] = Math.floor( height*v & height-1 );
+                            lookupTable[k++] = Math.floor( bright );
+                        }
+                    }
+                };
+                
+                // Self reference
+                var self = this;
+                
+                // Load texture from base64 encoded data
+                texture = new Image();
+                texture.src = Assets.texture;
+                texture.onload = function(e) { self.run(); };
+
+                /**
+                 * Do rest of initialization and start the show
+                 */
+                this.run = function() {
+
+                    // Setting dimensions
+                    width = texture.width;
+                    height= texture.height;
+                    
+                    // Setup lookuptable
+                    lookupTable =  new Array( 3 * width * height );                    
+                    _createLookupTable();                    
+                    
+                    // Setup tinyC5 instance
+                    var tinyC5 = new TinyC5({ width: width, 
+                        height: height, 
+                        scale:2, 
+                        captureMouse: true,
+                        container: document.getElementById( 'tinyC5_container' ), 
+                        title: 'Interactive Plane Deformation with brightness - TinyC5 Example #06' 
+                    });
+                    
+                    // Get textureImageData using handy Utils function of TinyC5 while skipping alpha channel
+                    textureImageData = TinyC5Utils.getImagedataFromImage( texture, true );
+
+                    // Some toggle to visualize mouse click
+                    var colorToggle = true;
+
+                    // Perform effect
+                    tinyC5.update = function()
+                    {
+                        // Declaring vars and setting local references for faster access
+                        var timeDisplacement = frameCount, o, u, v, adjustBright, cpyIndex, pixelCountDest;
+                        var r, g, b;
+                        var p = tinyC5.pixels;
+                        var l = textureImageData;
+                        var len = tinyC5.pixels.length/4;
+                        
+                        if ( tinyC5.mouseClick ) colorToggle = !colorToggle;
+                        
+                        // Loop over pixels
+                        for (var pixelCount = 0; pixelCount < len; pixelCount++ )
+                        {
+                            // Get lookup coordinates
+                            o = (pixelCount << 1)+ pixelCount;
+                            u = lookupTable[o+0] + timeDisplacement;    // to look like its animating, add timeDisplacement
+                            v = lookupTable[o+1] + timeDisplacement;
+                            adjustBright = lookupTable[o+2];                           
+                            
+                            // Copy pixels
+                            cpyIndex = ( width * ( v & height-1) + (u & width-1) );
+                            cpyIndex = ( cpyIndex << 1) + cpyIndex;
+                            pixelCountDest = pixelCount << 2;
+                            r = (colorToggle ) ? l[ cpyIndex ] + adjustBright : 0;
+                            g = (colorToggle ) ? 0 : l[ cpyIndex+1 ] + adjustBright;
+                            // b = l[ cpyIndex+2 ] + adjustBright;
+                            
+                            p[ pixelCountDest ] = r; //l[ cpyIndex ];
+                            p[ pixelCountDest + 1] = g; //l[ cpyIndex+1 ];
+                            //p[ pixelCountDest + 2 ] = b; //l[ cpyIndex+2 ];
+                        }
+                        
+                        // Increase timeDisplacement modifier
+                        frameCount+= ~~(tinyC5.mouseY/100)+1;
+                        
+                        // Free
+                        delete p;
+                        delete l;
+                    }
+                    
+                    // Prepare for postUpate
+                    var ctx = tinyC5.getCanvas().getContext( '2d' );
+                    ctx.font = "bold 14px sans-serif";
+                    ctx.fillStyle = '#cccccc';
+                    
+                    // Overwrite post update for post canvas updating
+                    tinyC5.postUpdate = function() {
+                        ctx.fillText( 'TinyC5 - HTML5 framebuffer graphics library', tinyC5.mouseX-25, 262 );
+                    }
+                    
+                    // Get the canvas object
+                    var canvas = tinyC5.getCanvas();
+                    canvas.addEventListener( 'click', function(e) { 
+                        tinyC5.setFullscreen( !tinyC5.isFullscreen() );
+                    } );                    
+                    
+                    // Start the show
+                    tinyC5.start();                    
+                }
+            }
+        </script>
+    </head>
+    <body onload="new Example06();">
+        <div id="container">
+            <div id="tinyC5_container">
+            </div>
+        </div>
+        <div id="footer">
+            Interactive Plane Deformation with brightness. Original code and texture by <a href="http://www.luis.net/">luis.net</a> | Created with <a href="http://www.dbfinteractive.com/forum/index.php?topic=5397.0">TinyC5</a>
+        </div>        
+    </body>
+</html>
