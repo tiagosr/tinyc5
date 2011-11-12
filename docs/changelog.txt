@@ -1,3 +1,16 @@
+12.11.2011 - Release of version 0.6 (Interaction and smoothing)
+
+    Added TinyC5.postUpdate() which can be overwritten to perform additional canvas processing after pixels are rendered.
+    Added TinyC5.setCaptureMouse() to de/activate mouse capturing.
+    Added TinyC5.isCaptureMouse() to get state of mouse capturing.
+    Added captureMouse parameter for constructor.
+    Added TinyC5 mouse properties for mouse capturing TinyC5.mouseX, TinyC5.mouseY, TinyC5.mouseClicked.
+    Added Example06 which showcases the mouse input- and postupdate-feature.
+    Added TinyC5.setSmoothing() to set image-rendering quality (speed vs quality).
+    Added TinyC5.isSmoothing() for getting smoothing state.
+    Added smoothing parameter for constructor.
+    Fixed setFullscreen bug on init.
+
 06.11.2011 - Release of version 0.5
 
     Added project to google code. Make your checkout here
