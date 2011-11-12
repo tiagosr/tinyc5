@@ -1,7 +1,7 @@
 /**
  * TinyC5
  * 
- * Version 0.5
+ * Version 0.6
  * 
  * Small library to create pixel manipulation effects which run in the browser (canvas).
  * This library is inspired by such great libraries like tinyPTC/Pixeltoaster.
@@ -57,7 +57,16 @@ window.requestAnimFrame = (function(){
 /**
  * Constructor
  * 
- * @param args  Object  Can have the following properties
+ * @param args  Object  Can have the following properties:
+ *                      width           integer     PixelBuffer width (Default 320)
+ *                      height          integer     PixelBuffer height (Default 200)
+ *                      scale           integer     Scalefactor (Default 1)
+ *                      fullscreen      boolean     Fullscreen mode (Default false)
+ *                      bgColor         object      Background color (Default is { r: 0, g: 0, b: 0, a: 255 }
+ *                      container       HTML elem   HTML container for the canvas. (Default body)
+ *                      title           string      Document's title (Default 'TinyC5')
+ *                      smoothing       boolean     false (default) optimize for speed, true: optimize for quality
+ *                      captureMouse    boolean     false (default) mouse capturing is off, true: mouse capturing is on               
  */
 function TinyC5( args ) {
     //////////////////////////////////////////////////////////////////////////////////////
@@ -65,8 +74,8 @@ function TinyC5( args ) {
     //////////////////////////////////////////////////////////////////////////////////////
 
     var _canvas, _context, _params, _container, _buffer, _outputCanvas, _outputContext,
-    _width, _height, _scale, _isRunning = false, _fullscreen = false, _startTime = 0, 
-    _loopTimeout, _fps = 1000 / 60, _bgColor, _title;
+    _width, _height, _scaleX, _scaleY, _isRunning = false, _fullscreen = false, _startTime = 0, 
+    _loopTimeout, _fps = 1000 / 60, _bgColor, _title, _smoothing = false, _captureMouse = false;
 
     // CSS styles variables for fullscreen mode
     var _fullscreenBodyCss, _origBodyCss, _fullscreenCanvasCss, _origCanvasCss;
@@ -83,7 +92,10 @@ function TinyC5( args ) {
     // Member variables/properties
     //////////////////////////////////////////////////////////////////////////////////////
 
-    this.pixels = null;    
+    this.pixels = null;
+    this.mouseX = 0;
+    this.mouseY = 0;
+    this.mouseClick = false;
 
     //////////////////////////////////////////////////////////////////////////////////////
     // Private methods
@@ -102,6 +114,8 @@ function TinyC5( args ) {
         if ( _isRunning ) {
             self.update();
             _render();
+            self.postUpdate();
+            self.mouseClick = false;
             _loopTimeout = _requestAnimFrame( _loop, _fps );
         } else {
             _cancelRequestAnimFrame( _loopTimeout );
@@ -143,6 +157,15 @@ function TinyC5( args ) {
                 break;
         }
     }
+    
+    var _updateScaleValues = function() {
+        _scaleX = window.innerWidth /_width;        
+        _scaleY = window.innerHeight / _height;
+        
+        this.VIEW_WIDTH     = Math.floor( _width * _scaleX );
+        this.VIEW_HEIGHT    = Math.floor( _height * _scaleY );
+    }
+    
 
     //////////////////////////////////////////////////////////////////////////////////////
     // Browser depending method fills
@@ -208,18 +231,18 @@ function TinyC5( args ) {
             _container.removeChild( _outputCanvas );
         }
         
-        // Detect browser engine
-        //_detectBrowserEngine();        
-        
         // Setting params
-        _params     = args || {};
-        _scale      = _params.scale || 1;
-        _width      = _params.width || 320;
-        _height     = _params.height || 200;
-        _fullscreen = _params.fullscreen || false;
-        _bgColor    = _params.bgColor || this.color( 0, 0, 0 );
-        _container  = _params.container || document.getElementsByTagName( 'body' )[0];
-        _title      = _params.title || 'TinyC5';
+        _params         = args || {};
+        _scaleX         = _params.scale || 1;
+        _scaleY         = _params.scale || 1;
+        _width          = _params.width || 320;
+        _height         = _params.height || 200;
+        _fullscreen     = !_params.fullscreen || false;
+        _bgColor        = _params.bgColor || this.color( 0, 0, 0 );
+        _container      = _params.container || document.getElementsByTagName( 'body' )[0];
+        _title          = _params.title || 'TinyC5';
+        _smoothing      = !_params.smoothing || false;
+        _captureMouse   = !_params.captureMouse || false;
 
         // Setting up canvas
         _canvas     = document.createElement( 'canvas' );
@@ -244,34 +267,30 @@ function TinyC5( args ) {
 
         // Update values of constants
         this.WIDTH          = _width;
-        this.HEIGHT         = _height;        
+        this.HEIGHT         = _height;
+        this.VIEW_WIDTH     = _width * _scaleX;
+        this.VIEW_HEIGHT    = _height * _scaleY;
 
         // Create outupt canvas to document
         _outputCanvas = document.createElement( 'canvas' );                
-        _outputCanvas.setAttribute( 'width', _width * _scale );
-        _outputCanvas.setAttribute( 'height', _height * _scale );                
+        _outputCanvas.setAttribute( 'width', _width * _scaleX );
+        _outputCanvas.setAttribute( 'height', _height * _scaleY );                
         _outputContext = _outputCanvas.getContext( '2d' );
 
         // Add output canvas to domtree
         _container.appendChild( _outputCanvas );
 
-        // Set fullscreen
-        this.setFullscreen( _fullscreen );
+        // Set smoothing
+        this.setSmoothing( _params.smoothing );
         
+        // Set mouse capturing
+        this.setCaptureMouse( _params.captureMouse );
+
+        // Set fullscreen
+        this.setFullscreen( _params.fullscreen );
+
         // Set window title
-        document.title = _title;
-    }
-
-
-    /**
-     * Update method
-     * This method is intended to be overwritten
-     * 
-     * @return void
-     */
-    this.update = function() {        
-        // overwrite this function with your own stunning effect
-        // manipulate the TinyC5.pixels property
+        document.title = _title;                
     }
 
     /**
@@ -295,6 +314,17 @@ function TinyC5( args ) {
     }
     
     /**
+     * Window onResize handler. Only called if application is in fullscreen mode.
+     * 
+     * @param e Event
+     * 
+     * @return void
+     */
+    this.onResize = function(e) {
+        _updateScaleValues();
+    }
+    
+    /**
      * Enable/disable fullscreen mode
      * 
      * @param fullscreen    boolean     true = Fullscreen, else normal mode
@@ -312,13 +342,18 @@ function TinyC5( args ) {
             _origCanvasCss = _outputCanvas.getAttribute( 'style' );
             body.setAttribute( 'style', _fullscreenBodyCss );
             _outputCanvas.setAttribute( 'style', _fullscreenCanvasCss );
+            _updateScaleValues();
+            window.addEventListener( 'resize', this.onResize, false );
         } else {
+            window.removeEventListener( 'resize', this.onResize, false );
             _fullscreen = false;
             var body = document.getElementsByTagName( 'body' )[0];
             body.setAttribute( 'style', _origBodyCss );
             _outputCanvas.setAttribute( 'style', _origCanvasCss );
             _origBodyCss = '';
             _origCanvasCss = '';
+            _scaleX = Math.floor( _outputCanvas.getAttribute( 'width' )/ _width );
+            _scaleY = Math.floor( _outputCanvas.getAttribute( 'height' )/ _height );            
         }
     }
     
@@ -330,6 +365,114 @@ function TinyC5( args ) {
      */
     this.isFullscreen = function() {
         return _fullscreen;
+    }
+    
+    /**
+     * Sets smoothing for image rendering
+     * 
+     * Note:
+     * Currently this feature is not supported by most browsers when it comes
+     * to canvas rendering.
+     * 
+     * @param smoothing     boolean     true, optimize for quality, else optimize for speed (default)
+     * 
+     * @return void
+     */
+    this.setSmoothing = function( smoothing ) {        
+        if ( smoothing == _smoothing ) return;
+        _smoothing = smoothing;
+        var style = _outputCanvas.style;
+        
+        // Optimize for quality
+        if ( _smoothing ) {
+            if ( _outputContext.mozImageSmoothingEnabled )  _outputContext.mozImageSmoothingEnabled = true;
+            style.setProperty("image-rendering", "optimizeQuality", "important");
+            style.setProperty("-ms-interpolation-mode", "bicubic", "important");
+        } else {
+            // Optimize for speed
+            if ( _outputContext.mozImageSmoothingEnabled )  _outputContext.mozImageSmoothingEnabled = false;
+            style.setProperty("image-rendering", "optimizeSpeed", "important");
+            style.setProperty("image-rendering", "-moz-crisp-edges", "important");
+            style.setProperty("image-rendering", "-webkit-optimize-contrast", "important");
+            style.setProperty("image-rendering", "optimize-contrast", "important");
+            style.setProperty("-ms-interpolation-mode", "nearest-neighbor", "important");        
+        }
+    }
+    
+    /**
+     * Returns smoothing state
+     * 
+     * @return boolean  true, smoothing is on (optimize for quality),
+     *                  false, smoothing is off (optimize for speed),
+     */
+    this.isSmoothing = function() {
+        return _smoothing;
+    }
+    
+    /**
+     * Event listener for mouse movement
+     * 
+     * @param e     Event
+     * 
+     * @return void
+     */
+    this.onMouseMove = function( e ) {
+        var t = e.target, w = self.VIEW_WIDTH, h = self.VIEW_HEIGHT, mx = 0, my = 0;
+        mx = e.pageX - t.offsetLeft - t.clientLeft;
+        my = e.pageY - t.offsetTop - t.clientTop;
+        mx = ~~(mx/_scaleX);
+        my = ~~(my/_scaleY);
+
+        // MinMax mouseX
+        mx = w ^ ((mx ^ w) & -(mx < w)); 
+        mx = 0 ^ ((0 ^ mx) & -(0 < mx)); 
+
+        // MinMax mouseY
+        my = h ^ ((my ^ h) & -(my < h)); 
+        my = 0 ^ ((0 ^ my) & -(0 < my)); 
+
+        // Update properties
+        self.mouseX = mx;
+        self.mouseY = my;        
+    }    
+    
+    /**
+     * Event handler for click event
+     * 
+     * @param e     Event
+     * 
+     * @return void
+     */
+    this.onMouseClick = function ( e ) {
+        self.mouseClick = true;
+    }
+    
+    /**
+     * Set capture mouse state
+     * 
+     * @param captureMouse  boolean     true, activate mouse capturing, false deactivate
+     * 
+     * @return void
+     */
+    this.setCaptureMouse = function( captureMouse ) {
+        if ( captureMouse == _captureMouse ) return;
+        _captureMouse = captureMouse;
+        if ( _captureMouse ) {
+            _outputCanvas.addEventListener( 'mousemove', self.onMouseMove, false );
+            _outputCanvas.addEventListener( 'click', self.onMouseClick, false );
+        } else {
+            _outputCanvas.removeEventListener( 'mousemove', self.onMouseMove, false );
+            _outputCanvas.removeEventListener( 'click', self.onMouseClick, false );
+        }
+    }
+    
+    /**
+     * Getter for capture mouse state
+     * 
+     * @return boolean  true, if mouse capturing is on, else false
+     */
+    this.isCaptureMouse = function() {
+        return _captureMouse;
     }
     
     /**
@@ -369,7 +512,7 @@ function TinyC5( args ) {
         } else {
             return {r: red, g: green, b: blue, a: 255};
         }
-    }    
+    }
     
     /**
      * Copies given array of pixel data to internal pixel data
@@ -395,6 +538,32 @@ function TinyC5( args ) {
         }
         
         return true;
+    }
+    
+    //////////////////////////////////////////////////////////////////////////////////////
+    // Interface methods - intended to be overwritten
+    //////////////////////////////////////////////////////////////////////////////////////
+    
+    /**
+     * Update method
+     * This method is intended to be overwritten
+     * 
+     * @return void
+     */
+    this.update = function() {        
+        // overwrite this function with your own stunning effect
+        // manipulate the TinyC5.pixels property
+    }
+    
+    /**
+     * Post update method is called after the pixels array is rendered.
+     * Overwrite this method if you want perform any post processing/draw actions
+     * on top of the pixels.
+     * 
+     * @return void
+     */
+    this.postUpdate = function() {
+        // Overwrite if you like
     }
 
     //////////////////////////////////////////////////////////////////////////////////////
@@ -424,7 +593,7 @@ function TinyC5( args ) {
     // Set constants
     //////////////////////////////////////////////////////////////////////////////////////    
     
-    this.VERSION        = 0.5;
+    this.VERSION        = 0.6;
     
     //////////////////////////////////////////////////////////////////////////////////////
     // Finalize initialization
