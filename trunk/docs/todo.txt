@@ -1,5 +1,7 @@
 Stuff I have in mind that I might implement in future releases (no specific order).
 
-+ Add scaleQuality (param, getter, setter)
-+ Add utils method for screenshot
-+ Add mouse support
++ Hide mouse pointer while over canvas: http://pc.autons.net/stuff/blanks/ http://stackoverflow.com/questions/2636068/hide-cursor-in-chrome-and-ie
+
+Known Bugs
+
++ Toggle Fullscreen does not work in all examples under Opera
