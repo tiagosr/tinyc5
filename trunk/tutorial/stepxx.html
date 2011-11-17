@@ -38,11 +38,6 @@
 
        gl_FragColor = vec4( vec3( color, color * 0.5, sin( color + time / 3.0 ) * 0.75 ), 1.0 );
  */
-                    if ( dx > 30 ) {
-                        dx = 0;
-                    } else {
-                        dx++;
-                    }
                     dx = tinyC5.getTime()/40 %  32;
                     for( var y = 0; y < tinyC5.HEIGHT; y++ ) {
                         for( var x=0; x < tinyC5.WIDTH; x++ ) {
