@@ -2,17 +2,49 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        
         <script type="text/javascript" src="js/TinyC5-0.6.js"></script>
         <script type="text/javascript">
-            function run() {
-                var tinyC5 = new TinyC5();
+            function main() {
+                var tinyC5, fc = 0, colorIndex, colors, color;
+                colors = [ { r: 155, g: 155, b: 255 }, 
+                           { r: 0, g: 0, b: 0 } ];
+                var args = {
+                    width: 160,
+                    height: 100,
+                    scale: 2     
+                };
+                tinyC5 = new TinyC5( args );
                 tinyC5.update = function() {
-                    
+                    fc += 0.015;
+                    var p = tinyC5.pixels;
+                    var dx = Math.sin( fc ) % 10 * 32;
+                    var dy = Math.cos( fc ) % 10 * 48;
+                    var index = 0;
+                    for( var y = 0; y < tinyC5.HEIGHT; y++ ) {
+                        for( var x=0; x < tinyC5.WIDTH; x++ ) {
+                            /*
+                            colorIndex = ( (x+dy >> 4) & 1) ^ ((y+dx >> 4) & 1);
+                            p[index++] = colors[ colorIndex ].r;
+                            p[index++] = colors[ colorIndex ].g;
+                            p[index++] = colors[ colorIndex ].b;
+                            */
+
+                            color = 255 * ( (x+dy >> 4) & 1) ^ ((y+dx >> 4) & 1);
+
+                            p[index++] = color;
+                            p[index++] = color;
+                            p[index++] = color;
+
+                            p[index++] = 255;
+                        }
+                    }
                 }
+
                 tinyC5.start();
             }
         </script>
     </head>
-    <body onload="run()">
+    <body onload="main()" style="background-color: #333">
     </body>
 </html>
