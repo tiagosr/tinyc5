@@ -5,9 +5,9 @@
         
         <link rel="stylesheet" type="text/css" href="styles.css" />
         
-        <script type="text/javascript" src="../src/TinyC5Utils-0.6.js"></script>
-        <script type="text/javascript" src="../src/TinyC5-0.6.js"></script>
-        <script type="text/javascript" src="Assets.js?06"></script>
+        <script type="text/javascript" src="../src/TinyC5Utils-0.7.js"></script>
+        <script type="text/javascript" src="../src/TinyC5-0.7.js"></script>
+        <script type="text/javascript" src="Assets.js?07"></script>
         <script type="text/javascript">
             /**
              * Example04 - Plane deformation
@@ -116,7 +116,7 @@
                     
                     // Get the canvas object
                     var canvas = tinyC5.getCanvas();
-                    canvas.addEventListener( 'click', function(e) { 
+                    canvas.addEventListener( tinyC5.FAST_CLICK_EVENT, function(e) { 
                         tinyC5.setFullscreen( !tinyC5.isFullscreen() );
                     } );                    
                     

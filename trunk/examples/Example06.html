@@ -5,9 +5,9 @@
         
         <link rel="stylesheet" type="text/css" href="styles.css" />
         
-        <script type="text/javascript" src="../src/TinyC5Utils-0.6.js"></script>
-        <script type="text/javascript" src="../src/TinyC5-0.6.js"></script>
-        <script type="text/javascript" src="Assets.js?06"></script>
+        <script type="text/javascript" src="../src/TinyC5Utils-0.7.js"></script>
+        <script type="text/javascript" src="../src/TinyC5-0.7.js"></script>
+        <script type="text/javascript" src="Assets.js?07"></script>
         <script type="text/javascript">
             /**
              * Example06 - Interactive Plane deformation with brightness
@@ -115,8 +115,8 @@
                             g = (colorToggle ) ? 0 : l[ cpyIndex+1 ] + adjustBright;
                             // b = l[ cpyIndex+2 ] + adjustBright;
                             
-                            p[ pixelCountDest ] = r; //l[ cpyIndex ];
-                            p[ pixelCountDest + 1] = g; //l[ cpyIndex+1 ];
+                            p[ pixelCountDest ] = tinyC5.clamp(r); //l[ cpyIndex ];
+                            p[ pixelCountDest + 1] = tinyC5.clamp(g); //l[ cpyIndex+1 ];
                             //p[ pixelCountDest + 2 ] = b; //l[ cpyIndex+2 ];
                         }
                         
@@ -137,12 +137,6 @@
                     tinyC5.postUpdate = function() {
                         ctx.fillText( 'TinyC5 - HTML5 framebuffer graphics library', tinyC5.mouseX-25, 262 );
                     }
-                    
-                    // Get the canvas object
-                    var canvas = tinyC5.getCanvas();
-                    canvas.addEventListener( 'click', function(e) { 
-                        tinyC5.setFullscreen( !tinyC5.isFullscreen() );
-                    } );                    
                     
                     // Start the show
                     tinyC5.start();                    
