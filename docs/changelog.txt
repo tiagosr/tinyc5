@@ -1,3 +1,10 @@
+XX.11.2011 - Release of version 0.7
+
+    Added TinyC5.clamp() to clamp color values.
+    Added Example07 (thanks to Raizor) demonstrating TinyC5.clamp().
+    Added TinyC5.FAST_CLICK_EVENT which is the device specific fasted event type for clicks.
+    Fixed Opera color bug in Example06.
+
 12.11.2011 - Release of version 0.6 (Interaction and smoothing)
 
     Added TinyC5.postUpdate() which can be overwritten to perform additional canvas processing after pixels are rendered.
