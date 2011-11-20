@@ -2,4 +2,4 @@ This folder contains a the steps/files of the "How to get started with TinyC5" t
 
 Please view the tutorial online and ask questions here:
 
-http://www
+http://www.dbfinteractive.com/forum/index.php?topic=5455.0
