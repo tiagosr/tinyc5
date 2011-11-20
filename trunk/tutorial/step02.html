@@ -7,7 +7,11 @@
         
         <script type="text/javascript">
             function main() {
-                 new TinyC5().start();
+                var tinyC5;
+                tinyC5 = new TinyC5();
+                tinyC5.init();
+                tinyC5.update = function() {};
+                tinyC5.start();
             }
         </script>
     </head>

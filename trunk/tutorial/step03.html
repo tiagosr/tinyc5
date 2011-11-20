@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        
+        <link rel="stylesheet" type="text/css" href="css/styles.css" />
+        
+        <script type="text/javascript" src="js/TinyC5-0.6.js"></script>
+        
+        <script type="text/javascript">
+            function main() {
+                var tinyC5, args;
+                tinyC5 = new TinyC5();
+                args = {
+                    width: 160,
+                    height: 100,
+                    scale: 2,
+                    title: 'Tutorial | TinyC5',
+                    bgColor: tinyC5.color( 155, 255, 100, 255 ),
+                    container: document.getElementById( 'tinyC5_container' )
+                };
+                tinyC5.init( args );
+                tinyC5.update = function() {};
+                tinyC5.start();
+            }
+        </script>
+    </head>
+    <body onload="main()">
+        <div id="container">
+            <!-- This is the DOM element to which the TinyC5 canvas element is appended -->
+            <div id="tinyC5_container">
+            </div>
+        </div>
+        <div id="footer">
+            Tutorial | Created with <a href="http://www.dbfinteractive.com/forum/index.php?topic=5397.0">TinyC5</a>
+        </div>        
+    </body>
+</html>
