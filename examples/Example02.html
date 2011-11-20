@@ -5,7 +5,7 @@
         
         <link rel="stylesheet" type="text/css" href="styles.css" />
         
-        <script type="text/javascript" src="../src/TinyC5-0.6.js"></script>
+        <script type="text/javascript" src="../src/TinyC5-0.7.js"></script>
         <script type="text/javascript">
             /**
              * Example02 - Ugly RGB
@@ -55,7 +55,7 @@
                 
                 // Get the canvas object
                 var canvas = tinyC5.getCanvas();
-                canvas.addEventListener( 'click', function(e) { 
+                canvas.addEventListener( tinyC5.FAST_CLICK_EVENT, function(e) { 
                     tinyC5.setFullscreen( !tinyC5.isFullscreen() );
                 } );
                 

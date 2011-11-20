@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TinyC5 Example07 - Meta Shade Blobs</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        
+        <link rel="stylesheet" type="text/css" href="styles.css" />
+
+        <script type="text/javascript" src="../src/TinyC5-0.7.js"></script>
+        <script type="text/javascript">
+			
+            // calc dot product
+            function dotproduct(a,b) {
+                    var n = 0, lim = Math.min(a.length,b.length);
+                    for (var i = 0; i < lim; i++) n += a[i] * b[i];
+                    return n;
+             }
+
+             // linear interpolate between and and b for value t (time 0.0 to 1.0)
+             function lerp(t, a, b) 
+             {
+                    return ( a + t * (b - a) );
+             }
+			 		
+			 
+            /**
+             * Small example showing some color cycling meta/shade blobs by Raizor
+             * 
+             * Based on Metablobs shader from ShaderToy by IQ (http://www.iquilezles.org/apps/shadertoy/)
+             */
+            function Example07() 
+            {				
+                // get and store start time
+                var startTime = new Date().getTime();
+
+                var cycleTimeSec = 2.000; // how many seconds should a blend take?
+                var cycleStartTime = 0.0; // current blend start time
+                var intensity = 0.0;
+                var scalingUp = false;
+
+                // rgb color source
+                var rvals, gvals, bvals;
+                // rgb color dest
+                var rvald, gvald, bvald;
+                // rgb color current
+                var rvalc, gvalc, bvalc;
+			
+                // Create an instance, 256x256 scaled up x2 to 512x512
+                var tinyC5 = new TinyC5({ scale: 2, 
+                    container: document.getElementById( 'tinyC5_container' ), 
+                    width:256, 
+                    height: 256,
+                    title: 'Meta Blobs - TinyC5 Example #07'
+                });
+				
+                // Self reference
+                var self = this;
+
+                // generate a random source and destination color (0 to 255)
+                rvals=Math.floor(Math.random()*256);
+                gvals=Math.floor(Math.random()*256);
+                bvals=Math.floor(Math.random()*256);
+
+                rvald=Math.floor(Math.random()*256);
+                gvald=Math.floor(Math.random()*256);
+                bvald=Math.floor(Math.random()*256);				
+															
+                tinyC5.update = function() // update function - called each frame
+                {
+                    var offset = 0;		
+
+                    var px, py, blob1x, blob1y, blob2x, blob2y;
+                    var r1, r2;
+                    var metaball, col, colR, colG, colB, colA, p;
+
+                    var time = (new Date().getTime()-startTime)/1000.0;
+
+                    if (intensity+(time*0.01) < 8)
+                    {
+                        intensity +=(time*0.01);
+                    }else{
+                        intensity = 8;
+                    }
+
+                    // centre point for each blob						
+                    blob1x = Math.cos(time)*0.4;
+                    blob1y = Math.sin(time*1.5)*0.4;
+                    blob2x = Math.cos(time*2.0)*0.4;
+                    blob2y = Math.sin(time*3.0)*0.4;
+
+                    if (time-cycleStartTime >= cycleTimeSec)
+                    {
+                        // we've hit the end of our color blend from source to dest
+                        // reset cycle start time
+                        cycleStartTime = time; 
+                        // swap dest color to source color
+                        rvals = rvald;
+                        gvals = gvald;
+                        bvals = bvald;
+                        // get new random dest color
+                        rvald=Math.floor(Math.random()*256);
+                        gvald=Math.floor(Math.random()*256);
+                        bvald=Math.floor(Math.random()*256);
+
+                        scalingUp = !scalingUp;
+
+                        cycleTimeSec = (Math.floor(Math.random()*50)+1)/10; // random cycle time between 0.1 and 5 secs
+                    }					
+                    // get time pos 0.0 to 1.0 in current color cycle
+                    var t = (time - cycleStartTime) / cycleTimeSec;
+
+                    // linear interpolate between source and dest color at position t (somewhere between 0.0 and 1.0)
+                    rvalc = lerp(t, rvals, rvald);
+                    gvalc = lerp(t, gvals, gvald);
+                    bvalc = lerp(t, bvals, bvald);
+
+                    // Make local reference
+                    p = tinyC5.pixels;
+
+                    for(var yo=0; yo<tinyC5.HEIGHT; yo++) // cycle through vertical pixels
+                    {
+                        for (var xo=0; xo<tinyC5.WIDTH; xo++) // cycle through horizontal pixels
+                        {			
+                            // calc screen coordinates 
+                            px = -0.75 + 1.5 * xo / tinyC5.WIDTH;
+                            py = -0.75 + 1.5 * yo / tinyC5.HEIGHT;											
+
+                            // radius scale - sets the radius according to time value in current color cycle
+                            var radScale = 0.0;
+                            if (scalingUp)
+                            {
+                                    radScale = 1.0 - t;
+                            }else{
+                                    radScale = t;
+                            }
+                            radScale*=2.5;
+                            radScale++;
+
+                            //radius for each blob
+                            r1 =dotproduct([px-blob1x,py-blob1y],[px-blob1x,py-blob1y])*8.0*radScale;
+                            r2 =dotproduct([px+blob2x,py+blob2y],[px+blob2x,py+blob2y])*16.0*radScale;
+
+                            //sum the meatballs using radius values
+                            metaball =(1.0/r1+1.0/r2);
+
+                            // alter the cut-off power, higher is more intense blobs
+                            col = Math.pow(metaball,intensity);
+
+                            // set pixel colours using intensity and current color                            
+                            p[offset]   = tinyC5.clamp( col*rvalc );   // Red
+                            p[offset+1] = tinyC5.clamp( col*gvalc );   // Green
+                            p[offset+2] = tinyC5.clamp( col*bvalc );   // Blue
+                            p[offset+3] = tinyC5.clamp( col*255 );     // Alpha
+                            offset+=4;
+                        }
+                    }
+                };
+
+                // Start the show
+                tinyC5.start();
+            }
+        </script>
+            
+    </head>
+    <body onload="Example07();">
+        <div id="container">
+            <div id="tinyC5_container">
+            </div>
+        </div>	
+        <div id="footer">
+            Meta Blobs example by Raizor | Created with <a href="http://www.dbfinteractive.com/forum/index.php?topic=5397.0">TinyC5</a>
+        </div>        
+    </body>
+</html>
