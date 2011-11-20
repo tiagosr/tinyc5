@@ -459,10 +459,10 @@ function TinyC5( args ) {
         _captureMouse = captureMouse;
         if ( _captureMouse ) {
             _outputCanvas.addEventListener( 'mousemove', self.onMouseMove, false );
-            _outputCanvas.addEventListener( 'click', self.onMouseClick, false );
+            _outputCanvas.addEventListener( this.FAST_CLICK_EVENT, self.onMouseClick, false );
         } else {
             _outputCanvas.removeEventListener( 'mousemove', self.onMouseMove, false );
-            _outputCanvas.removeEventListener( 'click', self.onMouseClick, false );
+            _outputCanvas.removeEventListener( this.FAST_CLICK_EVENT, self.onMouseClick, false );
         }
     }
     
@@ -512,6 +512,19 @@ function TinyC5( args ) {
         } else {
             return {r: red, g: green, b: blue, a: 255};
         }
+    }
+    
+    /**
+     * Clamps given value to the range 0-255
+     * 
+     * @param value     Number      Value to clamp
+     * 
+     * @return Number
+     */
+    this.clamp = function( value ) {
+        value = 255 ^ ((value ^ 255) & -(value < 255)); 
+        value = 0 ^ ((0 ^ value) & -(0 < value)); 
+        return value;
     }
     
     /**
@@ -581,6 +594,9 @@ function TinyC5( args ) {
     this.BROWSER_ENGINE = this.BROWSER_ENGINE_UNKNOWN;
     
     _detectBrowserEngine();   
+    
+    // Detect fastest click event
+    this.FAST_CLICK_EVENT = ( window.ontouch ) ? 'touchstart' : 'click';
     
     //////////////////////////////////////////////////////////////////////////////////////
     // Setting browser dependent code
