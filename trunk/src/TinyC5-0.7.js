@@ -237,12 +237,12 @@ function TinyC5( args ) {
         _scaleY         = _params.scale || 1;
         _width          = _params.width || 320;
         _height         = _params.height || 200;
-        _fullscreen     = !_params.fullscreen || false;
+        _fullscreen     = _params.fullscreen || false;
         _bgColor        = _params.bgColor || this.color( 0, 0, 0 );
         _container      = _params.container || document.getElementsByTagName( 'body' )[0];
         _title          = _params.title || 'TinyC5';
-        _smoothing      = !_params.smoothing || false;
-        _captureMouse   = !_params.captureMouse || false;
+        _smoothing      = _params.smoothing || false;        
+        _captureMouse   = _params.captureMouse || false;
 
         // Setting up canvas
         _canvas     = document.createElement( 'canvas' );
@@ -332,9 +332,8 @@ function TinyC5( args ) {
      * @return void
      */
     this.setFullscreen = function( fullscreen ) {
-        if ( fullscreen == _fullscreen ) {
-            return;
-        }
+        if ( fullscreen == _fullscreen ) return;
+        
         if ( fullscreen ) {
             _fullscreen = true;
             var body = document.getElementsByTagName( 'body' )[0];
@@ -379,7 +378,7 @@ function TinyC5( args ) {
      * @return void
      */
     this.setSmoothing = function( smoothing ) {        
-        if ( smoothing == _smoothing ) return;
+        if ( "boolean" != typeof( smoothing ) || smoothing == _smoothing ) return;
         _smoothing = smoothing;
         var style = _outputCanvas.style;
         
@@ -455,7 +454,7 @@ function TinyC5( args ) {
      * @return void
      */
     this.setCaptureMouse = function( captureMouse ) {
-        if ( captureMouse == _captureMouse ) return;
+        if ( "boolean" != typeof( captureMouse ) || captureMouse == _captureMouse ) return;
         _captureMouse = captureMouse;
         if ( _captureMouse ) {
             _outputCanvas.addEventListener( 'mousemove', self.onMouseMove, false );
