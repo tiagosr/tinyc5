@@ -3,7 +3,9 @@ XX.11.2011 - Release of version 0.7
     Added TinyC5.clamp() to clamp color values.
     Added Example07 (thanks to Raizor) demonstrating TinyC5.clamp().
     Added TinyC5.FAST_CLICK_EVENT which is the device specific fasted event type for clicks.
+    Added QUnit tests. Jaja, I know - those tests should be written before the actual code.
     Fixed Opera color bug in Example06.
+    Fixed a bunch of setter/getter bugs. Thanks to qunit testing.    
 
 12.11.2011 - Release of version 0.6 (Interaction and smoothing)
 

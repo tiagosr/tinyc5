@@ -18,8 +18,16 @@
                 
                 test( "Instance check", function() {
                     ok( "object" == typeof( tinyC5 ), "tinyC5 instance not created." );
+                    
+                    // Add simple checks for all functions which functionality is hard to check (too lazy for checking them ;-))
                     ok( "function" == typeof( tinyC5.update ), "tinyC5 has no update function." );
                     ok( "function" == typeof( tinyC5.postUpdate ), "tinyC5 has no postUpdate function." );
+                    ok( "function" == typeof( tinyC5.start ), "tinyC5 has no start function." );
+                    ok( "function" == typeof( tinyC5.stop ), "tinyC5 has no stop function." );
+                    ok( "function" == typeof( tinyC5.onResize ), "tinyC5 has no onResize function." );
+                    ok( "function" == typeof( tinyC5.onMouseMove ), "tinyC5 has no onMouseMove function." );
+                    ok( "function" == typeof( tinyC5.onMouseClick ), "tinyC5 has no onMouseClick function." );
+                    ok( "function" == typeof( tinyC5.clearPixels ), "tinyC5 has no clearPixels function." );
                 });
                 
                 test( "Properties", function() {
@@ -38,6 +46,9 @@
                 });
                 
                 test( "Initialization process", function() {
+                    
+                    ok( "function" == typeof( tinyC5.init ), "tinyC5 has no init function." );
+                    
                     var args = {
                         width: 640,
                         height: 480,
@@ -56,7 +67,111 @@
                     equal( 1, $( '#testOutput canvas' ).length, "Canvas initialization/appending to container failed." );
                 });
                 
-    
+                test ( "getCanvas", function(){
+                    ok( "function" == typeof( tinyC5.getCanvas ), "tinyC5 has no getCanvas function" );
+                    var res = tinyC5.getCanvas();
+                    ok( "object" == typeof( res ) );
+                });
+                
+                test( "setFullscreen", function() {
+                    ok( "function" == typeof( tinyC5.setFullscreen ), "tinyC5 has no setFullscreen function" );
+                    var isFullscreen = tinyC5.isFullscreen();
+                    tinyC5.setFullscreen( !isFullscreen );
+                    equal( tinyC5.isFullscreen(), !isFullscreen, "setFullscreen does not seem to work properly." );
+                    tinyC5.setFullscreen( isFullscreen );
+                });
+                
+                test( "isFullscreen", function(){
+                    ok( "function" == typeof( tinyC5.isFullscreen ), "tinyC5 has no isFullscreen function" );
+                    var res = tinyC5.isFullscreen();
+                    ok ( "boolean" == typeof( res ), "isFullscreen does not return proper value." );
+                }); 
+                
+                test( "setSmoothing", function() {
+                    ok( "function" == typeof( tinyC5.setSmoothing ), "tinyC5 has no setSmoothing function" );
+                    var isSmoothing = tinyC5.isSmoothing();
+                    tinyC5.setSmoothing( !isSmoothing );
+                    equal( tinyC5.isSmoothing(), !isSmoothing, "setSmoothing does not seem to work properly." );
+                    tinyC5.setSmoothing( isSmoothing );
+                });
+                
+                test( "isSmoothing", function(){
+                    ok( "function" == typeof( tinyC5.isSmoothing ), "tinyC5 has no isSmoothing function" );
+                    var res = tinyC5.isSmoothing();
+                    ok ( "boolean" == typeof( res ), "isSmoothing does not return proper value." );
+                }); 
+                
+                test( "setCaptureMouse", function() {
+                    ok( "function" == typeof( tinyC5.setCaptureMouse ), "tinyC5 has no setCaptureMouse function" );
+                    var isCaptureMouse = tinyC5.isCaptureMouse();
+                    tinyC5.setCaptureMouse( !isCaptureMouse );
+                    equal( tinyC5.isCaptureMouse(), !isCaptureMouse, "setCaptureMouse does not seem to work properly." );
+                    tinyC5.setCaptureMouse( isCaptureMouse );
+                });
+                
+                test( "isCaptureMouse", function(){
+                    ok( "function" == typeof( tinyC5.isCaptureMouse ), "tinyC5 has no isCaptureMouse function" );
+                    var res = tinyC5.isCaptureMouse();
+                    ok ( "boolean" == typeof( res ), "isCaptureMouse does not return proper value." + typeof( res ) );
+                });                 
+                
+                test( "getTime", function(){
+                    ok( "function" == typeof( tinyC5.getTime ), "tinyC5 has no getTime function" );
+                    var res = tinyC5.getTime();
+                    ok( "number" == typeof( res), "getTime returns invalid value." );
+                    ok( res > 0, "getTime returns incorrect value." );
+                });
+                
+                test( "color", function(){
+                    ok( "function" == typeof( tinyC5.color ), "tinyC5 has no color function" );
+                    var res = tinyC5.color( 1, 2, 3, 4 );
+                    ok( "object" == typeof( res ), "color returns invalid value." );
+                    equal( 1, res.r, "color return incorrect red value." );
+                    equal( 2, res.g, "color return incorrect green value." );
+                    equal( 3, res.b, "color return incorrect blue value." );
+                    equal( 4, res.a, "color return incorrect alpha value." );
+                    res = tinyC5.color( 1,2,3 );
+                    ok( "object" == typeof( res ), "color returns invalid value." );
+                    equal( 255, res.a, "color return incorrect alpha value." );
+                });
+                
+                test( "clamp", function(){
+                    ok( "function" == typeof( tinyC5.clamp ), "tinyC5 has no clamp function" );
+                    var res = tinyC5.clamp(200);
+                    ok( "number" == typeof( res ), "clamp returns invalid value." );
+                    equal( 200, res, "clamp returns incorrect value." );
+                    res = tinyC5.clamp(-200);
+                    ok( "number" == typeof( res ), "clamp returns invalid value." );
+                    equal( 0, res, "clamp returns incorrect value." );
+                    res = tinyC5.clamp(500);
+                    ok( "number" == typeof( res ), "clamp returns invalid value." );
+                    equal( 255, res, "clamp returns incorrect value." );
+                });
+                
+                test( "copyPixels", function(){
+                    ok( "function" == typeof( tinyC5.copyPixels ), "tinyC5 has no copyPixels function" );                                        
+                    
+                    var p = new Array( tinyC5.WIDTH * tinyC5.HEIGHT * 4 );
+                    for( var i=0; i < p.length; i++ ) {
+                        p[i] = Math.floor( Math.random()*256 );
+                    }
+                    
+                    var res = tinyC5.copyPixels(p);
+                    ok( res, "copyPixels function return false. True expected." );
+                    
+                    res = tinyC5.copyPixels( new Array( 1 ) );
+                    ok( !res, "copyPixels function return false. True expected." );
+                    
+                    var allEqual = true;
+                    for( var j=0; j < tinyC5.pixels.length; j++ ) {
+                        if ( tinyC5.pixels[j] != p[j] ) {
+                            console.log( tinyC5.pixels[j] );
+                            allEqual = false;
+                            break;
+                        }                        
+                    }
+                    ok( allEqual, "copyPixels function does not seem to work properly" );
+                });
 /*
                 test("a basic test example", function() {
                     ok( true, "this test is fine" );
