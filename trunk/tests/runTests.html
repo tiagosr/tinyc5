@@ -24,6 +24,7 @@
                     ok( "function" == typeof( tinyC5.update ), "tinyC5 has no update function." );
                     ok( "function" == typeof( tinyC5.postUpdate ), "tinyC5 has no postUpdate function." );
                     ok( "function" == typeof( tinyC5.start ), "tinyC5 has no start function." );
+                    ok( "function" == typeof( tinyC5.resume ), "tinyC5 has no resume function." );
                     ok( "function" == typeof( tinyC5.stop ), "tinyC5 has no stop function." );
                     ok( "function" == typeof( tinyC5.onResize ), "tinyC5 has no onResize function." );
                     ok( "function" == typeof( tinyC5.onMouseMove ), "tinyC5 has no onMouseMove function." );
@@ -171,6 +172,12 @@
                         }                        
                     }
                     ok( allEqual, "copyPixels function does not seem to work properly" );
+                });
+                
+                test( "isMobile", function() {
+                    ok( "function" == typeof( tinyC5.isMobile ), "Function isMobile does not exist." );
+                    var res = tinyC5.isMobile();
+                    ok( "boolean" == typeof(res), "isMobile returns an invalid value." );
                 });
                 
                 module( "TinyC5Utils" );
