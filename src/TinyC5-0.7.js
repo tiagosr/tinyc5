@@ -74,8 +74,9 @@ function TinyC5( args ) {
     //////////////////////////////////////////////////////////////////////////////////////
 
     var _canvas, _context, _params, _container, _buffer, _outputCanvas, _outputContext,
-    _width, _height, _scaleX, _scaleY, _isRunning = false, _fullscreen = false, _startTime = 0, 
-    _loopTimeout, _fps = 1000 / 60, _bgColor, _title, _smoothing = false, _captureMouse = false;
+    _width, _height, _scaleX, _scaleY, _isRunning = false, _fullscreen, _startTime = 0, 
+    _loopTimeout, _fps = 1000 / 60, _bgColor, _title, _smoothing, _captureMouse,
+    _supportMobile;
 
     // CSS styles variables for fullscreen mode
     var _fullscreenBodyCss, _origBodyCss, _fullscreenCanvasCss, _origCanvasCss;
@@ -126,8 +127,8 @@ function TinyC5( args ) {
         // RegEx for browser engine
         var rwebkit = /(webkit)[ \/]([\w.]+)/,
             ropera = /(opera)(?:.*version)?[ \/]([\w.]+)/,
-        rmsie = /(msie) ([\w.]+)/,
-        rmozilla = /(mozilla)(?:.*? rv:([\w.]+))?/;
+            rmsie = /(msie) ([\w.]+)/,
+            rmozilla = /(mozilla)(?:.*? rv:([\w.]+))?/;
                 
         var ua = window.navigator.userAgent.toLowerCase();
 
@@ -237,12 +238,10 @@ function TinyC5( args ) {
         _scaleY         = _params.scale || 1;
         _width          = _params.width || 320;
         _height         = _params.height || 200;
-        _fullscreen     = _params.fullscreen || false;
         _bgColor        = _params.bgColor || this.color( 0, 0, 0 );
         _container      = _params.container || document.getElementsByTagName( 'body' )[0];
         _title          = _params.title || 'TinyC5';
-        _smoothing      = _params.smoothing || false;        
-        _captureMouse   = _params.captureMouse || false;
+        _supportMobile  = _params.supportMobile || false;
 
         // Setting up canvas
         _canvas     = document.createElement( 'canvas' );
@@ -250,7 +249,16 @@ function TinyC5( args ) {
         _canvas.setAttribute( 'height', _height );
         _context    = _canvas.getContext( '2d' );
         _context.fillStyle = "rgba(" + _bgColor.r + "," + _bgColor.g + "," + _bgColor.b + "," + _bgColor.a +")";
-        _buffer     = _context.createImageData( _width, _height );    
+        _buffer     = _context.createImageData( _width, _height ); 
+        
+        // If mobile support
+        if ( _supportMobile && this.isMobile() ) {
+            // Add special meta tags to set viewport
+            var meta = document.createElement( 'meta' );
+            meta.setAttribute( 'name', 'viewport' );
+            meta.setAttribute( 'content', 'width=device-width, initial-scale=1.0, user-scalable=no' );
+            document.getElementsByTagName('head')[0].appendChild( meta );            
+        }
 
         // Set pixels to default background color
         var i = 0, l = _buffer.data.length;
@@ -303,6 +311,19 @@ function TinyC5( args ) {
         _startTime = Date.now();
         _loop();
     }
+    
+    /**
+     * Resumes a stopped application
+     * 
+     * Note:
+     * Actually the same as start with the different, that the timer does not get reseted.
+     * 
+     * @return void
+     */
+    this.resume = function() {
+        _isRunning = true;
+        _loop();
+    }
 
     /**
      * Stop the update/render loop
@@ -333,6 +354,7 @@ function TinyC5( args ) {
      */
     this.setFullscreen = function( fullscreen ) {
         if ( fullscreen == _fullscreen ) return;
+        if ( "boolean" != typeof( fullscreen ) ) _fullscreen = false;
         
         if ( fullscreen ) {
             _fullscreen = true;
@@ -378,7 +400,8 @@ function TinyC5( args ) {
      * @return void
      */
     this.setSmoothing = function( smoothing ) {        
-        if ( "boolean" != typeof( smoothing ) || smoothing == _smoothing ) return;
+        if ( "boolean" != typeof( smoothing ) ) smoothing = false;
+        
         _smoothing = smoothing;
         var style = _outputCanvas.style;
         
@@ -454,7 +477,9 @@ function TinyC5( args ) {
      * @return void
      */
     this.setCaptureMouse = function( captureMouse ) {
-        if ( "boolean" != typeof( captureMouse ) || captureMouse == _captureMouse ) return;
+        if ( captureMouse == _captureMouse ) return;
+        if ( "boolean" != typeof( captureMouse ) ) captureMouse = false;
+        
         _captureMouse = captureMouse;
         if ( _captureMouse ) {
             _outputCanvas.addEventListener( 'mousemove', self.onMouseMove, false );
@@ -524,6 +549,15 @@ function TinyC5( args ) {
         value = 255 ^ ((value ^ 255) & -(value < 255)); 
         value = 0 ^ ((0 ^ value) & -(0 < value)); 
         return value;
+    }
+    
+    /**
+     * Checks if current device is a mobile device
+     * 
+     * @return boolean  true, if device is a mobile device, else false
+     */
+    this.isMobile = function() {
+        return (/iphone|ipad|ipod|android|blackberry|mini|windows\sce|palm/i.test(navigator.userAgent.toLowerCase()));
     }
     
     /**

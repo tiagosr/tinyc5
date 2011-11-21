@@ -1,9 +1,11 @@
-XX.11.2011 - Release of version 0.7
+XX.11.2011 - Release of version 0.7 (Quality and mobility)
 
+    Added QUnit tests. Jaja, I know - those tests should be written before the actual code.
     Added TinyC5.clamp() to clamp color values.
+    Added TinyC5.resume() to resume a stopped application.
     Added Example07 (thanks to Raizor) demonstrating TinyC5.clamp().
     Added TinyC5.FAST_CLICK_EVENT which is the device specific fasted event type for clicks.
-    Added QUnit tests. Jaja, I know - those tests should be written before the actual code.
+    Added TinyC5.isMobile    
     Fixed Opera color bug in Example06.
     Fixed a bunch of setter/getter bugs. Thanks to qunit testing.    
 
