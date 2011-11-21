@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <script src="http://code.jquery.com/jquery-latest.js"></script>
+        <link rel="stylesheet" href="http://code.jquery.com/qunit/git/qunit.css" type="text/css" media="screen" />
+        <script type="text/javascript" src="http://code.jquery.com/qunit/git/qunit.js"></script>
+        
+        <script type="text/javascript" src="../src/TinyC5-0.7.js"></script>
+        
+        <script>
+            $(document).ready(function(){
+       
+                var currentVersion = 0.7;
+                var tinyC5 = new TinyC5();
+                
+                module( "TinyC5" );
+                
+                test( "Instance check", function() {
+                    ok( "object" == typeof( tinyC5 ), "tinyC5 instance not created." );
+                    ok( "function" == typeof( tinyC5.update ), "tinyC5 has no update function." );
+                    ok( "function" == typeof( tinyC5.postUpdate ), "tinyC5 has no postUpdate function." );
+                });
+                
+                test( "Properties", function() {
+                    ok( "string" == typeof( tinyC5.BROWSER_ENGINE ), "Invalid property BROWSER_ENGINE" );
+                    ok( "string" == typeof( tinyC5.FAST_CLICK_EVENT ), "Invalid property FAST_CLICK_EVENT" );
+                    ok( "number" == typeof( tinyC5.VERSION ), "Invalid property VERSION" );
+                    equal( currentVersion, tinyC5.VERSION , "Incorrect value for VERSION" );                    
+                    ok( tinyC5.pixels, "Invalid property: pixels" );
+                    ok( "number" == typeof( tinyC5.mouseX ), "Invalid property: mouseX" );
+                    ok( "number" == typeof( tinyC5.mouseY ), "Invalid property: mouseY" );
+                    ok( "boolean" == typeof( tinyC5.mouseClick ), "Invalid property: mouseClick" );
+                    ok( "number" == typeof( tinyC5.WIDTH ), "Invalid property: WIDTH" );
+                    ok( "number" == typeof( tinyC5.HEIGHT ), "Invalid property: HEIGHT" );
+                    ok( "number" == typeof( tinyC5.VIEW_WIDTH ), "Invalid property: VIEW_WIDTH" );
+                    ok( "number" == typeof( tinyC5.VIEW_HEIGHT ), "Invalid property: VIEW_HEIGHT" );                    
+                });
+                
+                test( "Initialization process", function() {
+                    var args = {
+                        width: 640,
+                        height: 480,
+                        scale: 2,
+                        title: 'TinyC5 Test',
+                        container: document.getElementById( 'testOutput' )
+                    };
+                    
+                    tinyC5.init( args );
+                    
+                    equal( args.width, tinyC5.WIDTH, "Width initialization failed." );
+                    equal( args.height, tinyC5.HEIGHT, "Width initialization failed." );
+                    equal( args.width * args.scale, tinyC5.VIEW_WIDTH, "Width/scale initialization failed." );
+                    equal( args.height * args.scale, tinyC5.VIEW_HEIGHT, "Height/scale initialization failed." );
+                    equal( args.title, document.title, "Title initialization failed." );
+                    equal( 1, $( '#testOutput canvas' ).length, "Canvas initialization/appending to container failed." );
+                });
+                
+    
+/*
+                test("a basic test example", function() {
+                    ok( true, "this test is fine" );
+                    var value = "hello";
+                    equal( value, "hello", "We expect value to be hello" );
+                });
+
+                module("Module A");
+
+                test("first test within module", function() {
+                    ok( true, "all pass" );
+                });
+
+                test("second test within module", function() {
+                    ok( true, "all pass" );
+                });
+
+                module("Module B");
+
+                test("some other test", function() {
+                    expect(2);
+                    equal( true, false, "failing test" );
+                    equal( true, true, "passing test" );
+                });
+*/
+            });
+        </script>
+
+    </head>
+    <body>
+        <h1 id="qunit-header">QUnit example</h1>
+        <h2 id="qunit-banner"></h2>
+        <div id="qunit-testrunner-toolbar"></div>
+        <h2 id="qunit-userAgent"></h2>
+        <ol id="qunit-tests"></ol>
+        <div id="qunit-fixture">test markup, will be hidden</div>
+        
+        <!-- TinyC5 container will be hidden -->
+        <div id="testOutput" style="display:none"></div>
+    </body>
+</html>

@@ -124,10 +124,10 @@ function TinyC5( args ) {
     
     var _detectBrowserEngine = function() {
         // RegEx for browser engine
-	var rwebkit = /(webkit)[ \/]([\w.]+)/,
-        ropera = /(opera)(?:.*version)?[ \/]([\w.]+)/,
-	rmsie = /(msie) ([\w.]+)/,
-	rmozilla = /(mozilla)(?:.*? rv:([\w.]+))?/;
+        var rwebkit = /(webkit)[ \/]([\w.]+)/,
+            ropera = /(opera)(?:.*version)?[ \/]([\w.]+)/,
+        rmsie = /(msie) ([\w.]+)/,
+        rmozilla = /(mozilla)(?:.*? rv:([\w.]+))?/;
                 
         var ua = window.navigator.userAgent.toLowerCase();
 
