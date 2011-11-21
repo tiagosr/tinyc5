@@ -166,7 +166,6 @@
                     var allEqual = true;
                     for( var j=0; j < tinyC5.pixels.length; j++ ) {
                         if ( tinyC5.pixels[j] != p[j] ) {
-                            console.log( tinyC5.pixels[j] );
                             allEqual = false;
                             break;
                         }                        
@@ -179,7 +178,6 @@
                 test( "getImagedataFromImage", function() {
                     ok( "function" == typeof( TinyC5Utils.getImagedataFromImage ), "Function getImagedataFromImage does not exist." );
                     var res = TinyC5Utils.getImagedataFromImage();
-                    console.log( res );
                     ok( null == res, "getImagedataFromImage returns wrong value for failure case." );
                 });
             });
