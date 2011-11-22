@@ -1,7 +1,6 @@
 Stuff I have in mind that I might implement in future releases (no specific order).
 
 + Maybe extend BROWSER ENGINE property for mobiles
-+ TinyC5.supportMobile = true, set META tag for viewport
 + Hide mouse pointer while over canvas: http://pc.autons.net/stuff/blanks/ http://stackoverflow.com/questions/2636068/hide-cursor-in-chrome-and-ie
 
 Known Bugs

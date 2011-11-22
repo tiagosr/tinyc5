@@ -5,7 +5,8 @@ XX.11.2011 - Release of version 0.7 (Quality and mobility)
     Added TinyC5.resume() to resume a stopped application.
     Added Example07 (thanks to Raizor) demonstrating TinyC5.clamp().
     Added TinyC5.FAST_CLICK_EVENT which is the device specific fasted event type for clicks.
-    Added TinyC5.isMobile    
+    Added TinyC5.isMobile() to check if app is running on mobile device.
+    Added 'supportMobile' flag for initialization.
     Fixed Opera color bug in Example06.
     Fixed a bunch of setter/getter bugs. Thanks to qunit testing.    
 
