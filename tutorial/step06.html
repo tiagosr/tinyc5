@@ -77,8 +77,11 @@
                             p[index++] = (y) * color;
                             p[index++] = 255;
                         }
-                    }
-                    tinyC5.getCanvas().getContext('2d').drawImage( logo, 0, 0 );
+                    }                    
+                }
+                
+                tinyC5.postUpdate = function() {
+                    tinyC5.getCanvas().getContext('2d').drawImage( logo, ( tinyC5.WIDTH - 160 ) / 2, 0 );
                 }
 
                 // Start the show
@@ -92,7 +95,7 @@
                 // Load texture from base64 encoded data
                 logo = new Image();
                 logo.src = logoSrc;
-                logo.onload = function(e) { main() };
+                logo.onload = function(e) { main(); };
             }
         </script>
     </head>
