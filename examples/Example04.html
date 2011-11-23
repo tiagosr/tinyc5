@@ -52,8 +52,9 @@
                 var self = this;
                 
                 // Load texture from base64 encoded data
+                var tinyC5 = new TinyC5();
                 texture = new Image();
-                texture.src = Assets.texture;
+                texture.src = tinyC5.isMobile() ? Assets.texture128 : Assets.texture256;
                 texture.onload = function(e) { self.run(); };
 
                 /**
@@ -70,12 +71,16 @@
                     _createLookupTable();                    
                     
                     // Setup tinyC5 instance
-                    var tinyC5 = new TinyC5({ width: width, 
+                    var args = {
+                        width: width, 
                         height: height, 
-                        scale:2, 
+                        scale: 2, 
+                        supportMobile: true,
                         container: document.getElementById( 'tinyC5_container' ), 
                         title: 'Plane Deformation - TinyC5 Example #04' 
-                    });
+                    };
+                    
+                    tinyC5.init( args );
                     
                     // Get textureImageData using handy Utils function of TinyC5 while skipping alpha channel
                     textureImageData = TinyC5Utils.getImagedataFromImage( texture, true );

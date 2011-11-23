@@ -15,10 +15,19 @@
             function Example01() 
             {
                 // Create and init an instance
-                var tinyC5 = new TinyC5( { scale: 2, container: document.getElementById( 'tinyC5_container' ), title: 'TV Noise - TinyC5 Example #01' } );
+                var tinyC5 = new TinyC5();
+                var args = {
+                    supportMobile: true,
+                    width: tinyC5.isMobile() ? 80 : 320,
+                    height: tinyC5.isMobile() ? 50 : 200,
+                    scale: tinyC5.isMobile() ? 3 : 2, 
+                    container: document.getElementById( 'tinyC5_container' ), 
+                    title: 'TV Noise - TinyC5 Example #01' 
+                };
+                tinyC5.init( args );
 
-                // Create larger backBuffer
-                var backBuffer = new Array( 960 * 600 * 4 );
+                // Create larger backBuffer                
+                var backBuffer = new Array( tinyC5.WIDTH * 3 * tinyC5.HEIGHT * 4 );
                 
                 // Precalculate the backBuffer
                 for (var i = 0; i < backBuffer.length; i += 4) 
@@ -31,11 +40,11 @@
                 }
 
                 // Overwrite update function with our stunning effect
-                var f = 0;
+                var f = 0, overhead = tinyC5.WIDTH * 2 * tinyC5.HEIGHT * 2;
                 tinyC5.update = function() 
                 {
-                    f = 4 * Math.floor( Math.random() * 640 * 400 );
-                    tinyC5.copyPixels( backBuffer.slice( f, 320 * 200 * 4 + f ) );
+                    f = 4 * Math.floor( Math.random() * overhead );
+                    tinyC5.copyPixels( backBuffer.slice( f, tinyC5.WIDTH * tinyC5.HEIGHT * 4 + f ) );
                 };
                 
                 // Get the canvas object
