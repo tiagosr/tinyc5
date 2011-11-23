@@ -22,10 +22,20 @@
                 tinyC5 = new TinyC5();
                 
                 // Create the args and initialize
-                var args = { scale: 2,                          // We scale the content by 2
-                    bgColor: tinyC5.color( 0, 0, 0, 8),         // Background color
-                    container: container,                       // We tell TinyC5 were to put our canvas
-                    title: 'Ugly RGB - TinyC5 Example #02'      // Title
+                var args = { 
+                    // We scale the content by 2
+                    scale: tinyC5.isMobile() ? 3 : 2,
+                    // Set device specific width/height
+                    width: tinyC5.isMobile() ? 80 : 320,
+                    height: tinyC5.isMobile()? 50 : 200,
+                    // Dont use transparent colors on mobiles
+                    bgColor: tinyC5.isMobile() ? tinyC5.color( 0, 0, 0, 255) : tinyC5.color( 0, 0, 0, 8),
+                    // We tell TinyC5 were to put our canvas
+                    container: container,
+                    // Support mobile
+                    supportMobile: true,
+                    // Title
+                    title: 'Ugly RGB - TinyC5 Example #02'
                 };  
                 tinyC5.init( args );
                 

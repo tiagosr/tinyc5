@@ -53,9 +53,12 @@
                 // Self reference
                 var self = this;
                 
+                // Create instance
+                var tinyC5 = new TinyC5();
+                
                 // Load texture from base64 encoded data
                 texture = new Image();
-                texture.src = Assets.texture;
+                texture.src = tinyC5.isMobile() ? Assets.texture128 : Assets.texture256;
                 texture.onload = function(e) { self.run(); };
 
                 /**
@@ -72,13 +75,16 @@
                     _createLookupTable();                    
                     
                     // Setup tinyC5 instance
-                    var tinyC5 = new TinyC5({ width: width, 
+                    var args = { width: width, 
                         height: height, 
                         scale:2, 
                         captureMouse: true,
+                        supportMobile: true,
                         container: document.getElementById( 'tinyC5_container' ), 
                         title: 'Interactive Plane Deformation with brightness - TinyC5 Example #06' 
-                    });
+                    };
+                    
+                    tinyC5.init( args );
                     
                     // Get textureImageData using handy Utils function of TinyC5 while skipping alpha channel
                     textureImageData = TinyC5Utils.getImagedataFromImage( texture, true );
@@ -135,7 +141,7 @@
                     
                     // Overwrite post update for post canvas updating
                     tinyC5.postUpdate = function() {
-                        ctx.fillText( 'TinyC5 - HTML5 framebuffer graphics library', tinyC5.mouseX-25, 262 );
+                        ctx.fillText( 'TinyC5 - HTML5 framebuffer graphics library', tinyC5.mouseX-25, tinyC5.HEIGHT + 6 );
                     }
                     
                     // Start the show

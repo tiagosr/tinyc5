@@ -7,16 +7,7 @@
         <script type="text/javascript" src="../src/TinyC5-0.7.js"></script>
         <script type="text/javascript">
 
-            var screen_width = 640;
-            var screen_height = 480;
-            var screen_x4 = screen_width*4;
-
-            var current_view = {
-                rect_top: 0,
-                rect_bottom: screen_height,
-                rect_left: 0,
-                rect_right: screen_width
-            };
+            var screen_width, screen_height, screen_x4, current_view;
 
             var pixels = null;
 
@@ -318,11 +309,23 @@
             function Example05() 
             {
                 var tinyC5 = new TinyC5();
+                screen_width = tinyC5.isMobile() ? 120 : 640;
+                screen_height = tinyC5.isMobile() ? 80 : 480;
+                screen_x4 = screen_width*4;
+
+                current_view = {
+                    rect_top: 0,
+                    rect_bottom: screen_height,
+                    rect_left: 0,
+                    rect_right: screen_width
+                };                
+                
                 var args = { title: 'Rubberduck 3D - TinyC5 Example #05',
                     width: screen_width, 
                     height: screen_height, 
                     bgColor: tinyC5.color(0,0,0,255),
-                    scale:1, 
+                    scale: tinyC5.isMobile() ? 2 : 1, 
+                    supportMobile: true,
                     container: document.getElementById( 'tinyC5_container' ) 
                 };
                 tinyC5.init( args );
@@ -362,12 +365,12 @@
 
                     if (1)
                     {
-                        makematrix(roll, tilt, turn,50);
+                        makematrix(roll, tilt, turn, (tinyC5.isMobile() ? 10 : 50) );
                         roll += 0.02;
                         tilt += 0.03;
                         turn += 0.07;
 
-                        zscale = 3;
+                        zscale = tinyC5.isMobile() ? 8 : 3;
                         zbias = 400;
 
                         var vtrans = [];

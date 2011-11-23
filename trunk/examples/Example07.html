@@ -46,16 +46,17 @@
                 var rvalc, gvalc, bvalc;
 			
                 // Create an instance, 256x256 scaled up x2 to 512x512
-                var tinyC5 = new TinyC5({ scale: 2, 
+                var tinyC5 = new TinyC5();
+                var args = { 
+                    scale: 2, 
                     container: document.getElementById( 'tinyC5_container' ), 
-                    width:256, 
-                    height: 256,
+                    width: tinyC5.isMobile() ? 128 : 256, 
+                    height: tinyC5.isMobile() ? 128 : 256,
+                    supportMobile: true,
                     title: 'Meta Blobs - TinyC5 Example #07'
-                });
+                };
+                tinyC5.init( args );
 				
-                // Self reference
-                var self = this;
-
                 // generate a random source and destination color (0 to 255)
                 rvals=Math.floor(Math.random()*256);
                 gvals=Math.floor(Math.random()*256);
@@ -155,6 +156,12 @@
                         }
                     }
                 };
+
+                // Get the canvas object
+                var canvas = tinyC5.getCanvas();
+                canvas.addEventListener( tinyC5.FAST_CLICK_EVENT, function(e) { 
+                    tinyC5.setFullscreen( !tinyC5.isFullscreen() );
+                } );
 
                 // Start the show
                 tinyC5.start();

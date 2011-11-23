@@ -7,6 +7,7 @@ XX.11.2011 - Release of version 0.7 (Quality and mobility)
     Added TinyC5.FAST_CLICK_EVENT which is the device specific fasted event type for clicks.
     Added TinyC5.isMobile() to check if app is running on mobile device.
     Added 'supportMobile' flag for initialization.
+    Added How to get started with TinyC5 development tutorial.
     Fixed Opera color bug in Example06.
     Fixed a bunch of setter/getter bugs. Thanks to qunit testing.    
 

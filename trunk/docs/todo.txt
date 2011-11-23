@@ -6,3 +6,4 @@ Stuff I have in mind that I might implement in future releases (no specific orde
 Known Bugs
 
 + Toggle Fullscreen does not work in all examples under Opera
++ Touch events on mobile (e.g. MouseX/MouseY) are not supported properly
