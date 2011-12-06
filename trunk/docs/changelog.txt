@@ -1,4 +1,9 @@
-XX.11.2011 - Release of version 0.7 (Quality and mobility)
+XX.XX.2011 - XXX
+
+    Added new tutorial about image loading.
+    Removed CSS shaded border on all examples. This gives additional performance boost. Thanks to jace!
+
+25.11.2011 - Release of version 0.7 (Quality and mobility)
 
     Added QUnit tests. Jaja, I know - those tests should be written before the actual code.
     Added TinyC5.clamp() to clamp color values.
@@ -9,7 +14,7 @@ XX.11.2011 - Release of version 0.7 (Quality and mobility)
     Added 'supportMobile' flag for initialization.
     Added How to get started with TinyC5 development tutorial.
     Fixed Opera color bug in Example06.
-    Fixed a bunch of setter/getter bugs. Thanks to qunit testing.    
+    Fixed a bunch of setter/getter bugs. Thanks to qunit testing.
 
 12.11.2011 - Release of version 0.6 (Interaction and smoothing)
 

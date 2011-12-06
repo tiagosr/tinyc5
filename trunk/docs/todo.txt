@@ -1,5 +1,6 @@
 Stuff I have in mind that I might implement in future releases (no specific order).
 
++ Change PostUpdate Event to work on original canvas instead of output canvas
 + Maybe extend BROWSER ENGINE property for mobiles
 + Hide mouse pointer while over canvas: http://pc.autons.net/stuff/blanks/ http://stackoverflow.com/questions/2636068/hide-cursor-in-chrome-and-ie
 
