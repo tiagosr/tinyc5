@@ -1,7 +1,7 @@
 
 html, body { height:100%; overflow:hidden; }
 body { margin:0; color: #CCCCCC; background-color: #1C1C1C;}
-#container { 
+#container {
     text-align: center;
     width: 100%;
     height: 100%;
@@ -9,21 +9,12 @@ body { margin:0; color: #CCCCCC; background-color: #1C1C1C;}
 }
 #tinyC5_container {
     display: table-cell;
-    vertical-align: middle;			
+    vertical-align: middle;
 }
 canvas {
-    border: 8px solid #f1f1f1;			
-      -moz-border-radius: 10px;
-      -webkit-border-radius: 10px;
-      border-radius: 10px;
-
-      -moz-box-shadow: 10px 10px 15px #000;
-      -webkit-box-shadow: 10px 10px 15px #000;
-      box-shadow: 10px 10px 15px #000;
-
-        /*padding: 4px 7px;*/
-
-        outline: 0;
+    border: 8px solid #f1f1f1;
+    border-radius: 10px;
+    outline: 0;
 }
 #footer {
     font-family: Courier New;
